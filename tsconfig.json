@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "composite": true,
+        "baseUrl": ".",
+        "outDir": "./public",
+        "types": [ "node", "jest" ],
+        "allowSyntheticDefaultImports": true
+    },
+    "include": [ "index.ts", "src/**/*", "package.json" ]
+}
