@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "watch": "tsc --project tsconfig.json --watch",
     "build": "tsc --project tsconfig.json",
-    "dev": "nodemon --es-module-specifier-resolution=node public/index.js"
+    "dev": "nodemon --es-module-specifier-resolution=node public/index.js",
+    "go": "node --es-module-specifier-resolution=node public/index.js"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,90 @@
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { _TYPE_CONTROL_GENERIC_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROL_PROPS_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_BAD_TOKEN, _TYPE_EOF_TOKEN, _TYPE_HTML_TOKEN, _TYPE_INJECTION_TOKEN, CONTROL_COMPONENT_TOKEN } from '../const/tokenTypes';
+import { _TYPE_BLANK_TOKEN } from './tokenTypes';
+const localfileURL = fileURLToPath(import.meta.url);
+const localdir = dirname(localfileURL);
+export const COMPONENT_FILE_PATH = localdir + '\\..\\..\\..\\user_components\\';
+export const RENDERED_FILE_PATH = localdir + '\\..\\..\\rendered\\';
+export const SELF_CLOSING_TAG_TYPES = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+export const CLOSING_EXEMPT_TAGS = ['meta'];
+export const BLANK_RULE = { type: _TYPE_BLANK_TOKEN, start: '_$BLANK_RULE$_', end: '_$BLANK_RULE$_' };
+export const HTML_RULE = { type: _TYPE_HTML_TOKEN, start: '<', end: '>' };
+export const INJECT_RULE = { type: _TYPE_INJECTION_TOKEN, start: '{{', end: '}}' };
+export const CONTROL_RULE = { type: _TYPE_CONTROL_GENERIC_TOKEN, start: '[[', end: ']]' };
+export const CONTROL_IF_RULE = { type: CONTROLIF_IF_TOKEN, start: '#', end: 'IF' };
+export const CONTROL_ELSEIF_RULE = { type: CONTROLIF_ELSEIF_TOKEN, start: '#', end: 'ELSEIF' };
+export const CONTROL_ELSE_RULE = { type: CONTROLIF_ELSE_TOKEN, start: '#', end: 'ELSE' };
+export const CONTROL_FOR_RULE = { type: CONTROLFOR_FOR_TOKEN, start: '#', end: 'FOR' };
+export const CONTROL_END_RULE = { type: CONTROLFOR_ENDFOR_TOKEN, start: '#', end: 'END' };
+export const CONTROL_COMPONENT_RULE = { type: CONTROL_COMPONENT_TOKEN, start: '#', end: 'COMPONENT' };
+export const CONTROL_PROPS_RULE = { type: CONTROL_PROPS_TOKEN, start: '#', end: 'PROPS' };
+export const BLANK_TOKEN = { type: _TYPE_BLANK_TOKEN, raw: '_$BLANK_TOKEN$$_', value: '_$BLANK_TOKEN$$_', name: '_$BLANK_TOKEN$_', enumerationMap: {} };
+export const BAD_TOKEN = { type: _TYPE_BAD_TOKEN, raw: '_$BLANK_TOKEN$$_', value: '_$BAD_TOKEN$_', name: '_$BAD_TOKEN$_', enumerationMap: {} };
+export const EOF_TOKEN = { type: _TYPE_EOF_TOKEN, raw: '_$BLANK_TOKEN$$_', value: '_$EOF_TOKEN$_', name: '_$EOF_TOKEN$_', enumerationMap: {} };
+export const INVALID_POSITION = { start: -1, end: -1, next: -1 };
+export const INVALID_INPUT_TOKEN = { type: _TYPE_INVALID_INPUT, raw: '_$BLANK_TOKEN$$_', value: '_$INVALID_TOKEN$_', name: '_$INVALID_TOKEN$_', enumerationMap: {} };
+export const INTERMEDIATE_CONTENT = '_$INTERMEDIATE_CONTENT$_';
+export const WHITESPACE_CONTENT = '_$WHITESPACE_CONTENT$_';
+export const INVALID_TOKEN_NAME = '_$INVALID_TOKEN_NAME$_';
+export const FILE_EXTENSION_GGD = '.ggd';
+export const FILE_EXTENSION_HTML = '.html';
+export const ALGEBRAIC_AND = '&';
+export const ALGEBRAIC_OR = '|';
+export const ALGEBRAIC_NOT = 'NOT';
+export const CONTROL_FOR_ALIAS_INDEX = 1;
+export const CONTROL_FOR_PREPOSITION_INDEX = 2;
+export const CONTROL_FOR_SYMBOL_INDEX = 3;
+export const FN_CLONE_TOKEN = (t) => {
+    const clone = Object.assign({}, t);
+    clone.enumerationMap = Object.assign({}, t.enumerationMap);
+    return clone;
+};
+export const FN_GET_PROPS_ARRAY = (propsToken) => {
+    const temp = propsToken.value.split(' '); // [[ #PROPS msg1,msg2, data ]]
+    temp.shift();
+    temp.shift();
+    temp.pop();
+    const props = temp.join('').split(',').map((s) => s.trim()); // [ msg1,msg2 ]
+    return props;
+};
+// export const FN_SORT_BY_REF_QTY = (a: iComponentReference, b: iComponentReference, ) => {
+//     if ( a.referenceQuantity < b.referenceQuantity ) {
+//       return -1;
+//     } else if ( a.referenceQuantity > b.referenceQuantity ) {
+//       return 1;
+//     } else return 0;
+// }
+export const _DEV_SYMBOLTABLE = {
+    document: {
+        doctype: 'html',
+        language: 'en',
+        metaAttributes: [
+            'charset="UTF-8"',
+            'http-equiv="X-UA-Compatible" content="IE=edge"',
+            'name="viewport" content="width=device-width, initial-scale=1.0"'
+        ],
+        title: 'my webpage template'
+    },
+    styles: {
+        inboxWrapper: 'style="border: 2px solid #000; margin: 30px auto; padding: 20px 40px; width: 800px;"'
+    },
+    inboxes: [
+        {
+            inboxName: 'inbox1',
+            messages: [
+                { from: 'foo1@bar.com', recipients: ['hank.hill@stricklandpropane.com', 'spongebob.squarepants@bikinibottom.gov'], subject: 'some topic' },
+                { from: 'foo2@bar.com', recipients: ['hank.hill@stricklandpropane.com'], subject: 'some other topic' }
+            ],
+            private: true
+        },
+        {
+            inboxName: 'inbox2',
+            messages: [
+                { from: 'fizz1@buzz.com', recipients: ['hank.hill@stricklandpropane.com'], subject: 'messageA' },
+                { from: 'fizz2@buzz.com', recipients: ['hank.hill@stricklandpropane.com'], subject: 'messageB' }
+            ],
+            private: false
+        }
+    ]
+};
