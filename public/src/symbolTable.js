@@ -1,34 +1,35 @@
 export class SymbolTable {
     contextStack;
-    constructor(st) {
-        this.contextStack = [{ aliases: {}, props: st }];
+    constructor(contextStack) {
+        this.contextStack = contextStack;
     }
     pushContext(context) {
         this.contextStack.push(context);
         return this;
     }
-    addContextualSymbol(value, alias, contextIndex) {
-        let result = true;
+    addContextualSymbol(value, symbol, contextIndex) {
+        let result = false;
         const context = this.getContext(contextIndex);
-        if (context.props[alias] === undefined && context.aliases[alias] === undefined) {
-            context.aliases[alias] = value;
+        if (context.props[symbol] === undefined && context.aliases[symbol] === undefined) {
+            context.aliases[symbol] = value;
             result = true;
         }
         return result;
     }
     popContext() {
         const context = this.contextStack.pop();
-        let result = false;
-        if (context != undefined)
-            result = true;
-        return result;
+        return context;
     }
     removeSymbol(alias) {
         const context = this.getContext();
         let ret = false;
-        if (context[alias] !== undefined) {
+        if (context.aliases[alias] !== undefined) {
             ret = true;
-            delete context[alias];
+            delete context.aliases[alias];
+        }
+        if (context.props[alias] !== undefined) {
+            ret = true;
+            delete context.props[alias];
         }
         return ret;
     }
@@ -58,10 +59,12 @@ export class SymbolTable {
             else
                 ret = rootSymbol;
             if (ret == undefined) {
-                const currentContext = this.getContext();
+                /* const currentContext: iSymbolContext = this.getContext();
                 console.log('[ SYMBOL TABLE ] Undefined symbol found:', symbolName, iteration);
-                Object.keys(currentContext.aliases).forEach((key) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.aliases[key]));
-                Object.keys(currentContext.props).forEach((key) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.props[key]));
+                Object.keys(currentContext.aliases).forEach((key: string) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.aliases[key]));
+                Object.keys(currentContext.props).forEach((key: string) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.props[key]));
+                */
+                throw new Error('[ SYMBOL TABLE ] resolveSymbol(): failed to resolve symbol: ' + symbolName);
             }
         }
         catch (error) {

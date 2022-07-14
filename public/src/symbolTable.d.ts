@@ -1,10 +1,10 @@
 import { iSymbolContext, iSymbolTable } from "./interfaces/interfaces";
 export declare class SymbolTable {
     private contextStack;
-    constructor(st: iSymbolTable);
+    constructor(contextStack: Array<iSymbolContext>);
     pushContext(context: iSymbolContext): SymbolTable;
-    addContextualSymbol(value: any, alias: string, contextIndex?: number): boolean;
-    popContext(): boolean;
+    addContextualSymbol(value: any, symbol: string, contextIndex?: number): boolean;
+    popContext(): iSymbolContext;
     removeSymbol(alias: string): boolean;
     resolveEnumerableSymbol(symbolName: string, enumerationMap?: {
         [key: string]: number;
@@ -17,6 +17,6 @@ export declare class SymbolTable {
     }): boolean;
     getContext(index?: number): iSymbolContext;
     setContextProps(props: iSymbolTable, index?: number): void;
-    private walkToValue;
-    private lookupSymbol;
+    walkToValue(pathTokens: Array<string>, initContext: iSymbolTable): any;
+    lookupSymbol(symbol: string, enumeration?: number): any;
 }

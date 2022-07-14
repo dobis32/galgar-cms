@@ -17,7 +17,7 @@ export interface iToken {
 export interface iLexPosition {
     start: number;
     end: number;
-    next?: number;
+    next: number;
 }
 export interface iSymbolTable {
     [key: string]: any;

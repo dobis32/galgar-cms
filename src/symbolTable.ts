@@ -2,8 +2,8 @@ import { iSymbolContext, iSymbolTable, iToken } from "./interfaces/interfaces";
 
 export class SymbolTable {
     private contextStack: Array<iSymbolContext>;
-    constructor(st: iSymbolTable) {
-        this.contextStack = [ { aliases: { }, props: st } ];
+    constructor(contextStack: Array<iSymbolContext>) {
+        this.contextStack = contextStack;
     }
 
     pushContext(context: iSymbolContext): SymbolTable {
@@ -11,29 +11,31 @@ export class SymbolTable {
         return this;
     }
 
-    addContextualSymbol(value: any, alias: string, contextIndex?: number): boolean {
-        let result: boolean = true;
+    addContextualSymbol(value: any, symbol: string, contextIndex?: number): boolean {
+        let result: boolean = false;
         const context: iSymbolContext = this.getContext(contextIndex);
-        if (context.props[alias] === undefined && context.aliases[alias] === undefined) {
-            context.aliases[alias] = value;
+        if (context.props[symbol] === undefined && context.aliases[symbol] === undefined) {
+            context.aliases[symbol] = value;
             result = true;
         }
         return result;
     }
 
-    popContext(): boolean {
+    popContext(): iSymbolContext {
         const context: iSymbolContext = this.contextStack.pop() as iSymbolContext;
-        let result: boolean = false;
-        if (context != undefined) result = true;
-        return result;
+        return context;
     }
 
     removeSymbol(alias: string): boolean {
-        const context: iSymbolTable = this.getContext();
+        const context: iSymbolContext = this.getContext();
         let ret: boolean = false;
-        if (context[alias] !== undefined) {
+        if (context.aliases[alias] !== undefined) {
             ret = true;
-            delete context[alias];
+            delete context.aliases[alias];
+        }
+        if (context.props[alias] !== undefined) {
+            ret = true;
+            delete context.props[alias];
         }
         return ret;
     }
@@ -63,10 +65,12 @@ export class SymbolTable {
             }
             else ret = rootSymbol;
             if (ret == undefined) {
-                const currentContext: iSymbolContext = this.getContext();
+                /* const currentContext: iSymbolContext = this.getContext();
                 console.log('[ SYMBOL TABLE ] Undefined symbol found:', symbolName, iteration);
                 Object.keys(currentContext.aliases).forEach((key: string) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.aliases[key]));
                 Object.keys(currentContext.props).forEach((key: string) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.props[key]));
+                */
+                throw new Error('[ SYMBOL TABLE ] resolveSymbol(): failed to resolve symbol: ' + symbolName);
             }
         } catch(error) {
             console.log('[ SYMBOL TABLE ERROR ]' + error)
@@ -99,7 +103,7 @@ export class SymbolTable {
         context.props = props;
     }
 
-    private walkToValue(pathTokens: Array<string>, initContext: iSymbolTable): any {
+    walkToValue(pathTokens: Array<string>, initContext: iSymbolTable): any {
         let resolved: any = initContext;
         let token: string;
         let context: iSymbolTable;
@@ -112,7 +116,7 @@ export class SymbolTable {
         return value;
     }
 
-    private lookupSymbol(symbol: string, enumeration?: number): any {
+    lookupSymbol(symbol: string, enumeration?: number): any {
         /* algorithm summary:
             1. try to get a value from the context stack
                 1a. try to get a value from props

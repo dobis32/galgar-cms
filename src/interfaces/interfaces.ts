@@ -20,7 +20,7 @@ export interface iToken {
 export interface iLexPosition {
     start: number;
     end: number;
-    next?: number;
+    next: number;
 }
 
 export interface iSymbolTable {
@@ -34,7 +34,6 @@ export interface iEnumerationMap {
 export interface iComponentReference {
     name: string,
     raw: string,
-    // referenceQuantity: number,
     props: Array<string>;
     tokens: Array<iToken>
 }

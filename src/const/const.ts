@@ -5,11 +5,10 @@ import { iLexPosition, iRule, iSymbolTable, iToken } from '../interfaces/interfa
 import { _TYPE_WHITESPACE_TOKEN, _TYPE_CONTROL_GENERIC_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROL_PROPS_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_BAD_TOKEN, _TYPE_EOF_TOKEN, _TYPE_HTML_TOKEN, _TYPE_INJECTION_TOKEN, CONTROL_COMPONENT_TOKEN } from '../const/tokenTypes';
 import { _TYPE_BLANK_TOKEN } from './tokenTypes';
 
-const localfileURL = fileURLToPath(import.meta.url);
-const localdir = dirname(localfileURL);
+const localdir = process.cwd();
 
-export const COMPONENT_FILE_PATH: string = localdir + '\\..\\..\\..\\user_components\\';
-export const RENDERED_FILE_PATH: string = localdir + '\\..\\..\\rendered\\';
+export const COMPONENT_FILE_PATH: string = localdir + '\\user_components\\';
+export const RENDERED_FILE_PATH: string = localdir + '\\rendered\\';
 export const SELF_CLOSING_TAG_TYPES: Array<string> = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
 export const CLOSING_EXEMPT_TAGS: Array<string> = ['meta'];
 export const BLANK_RULE: iRule = { type: _TYPE_BLANK_TOKEN, start: '_$BLANK_RULE$_', end: '_$BLANK_RULE$_' };
