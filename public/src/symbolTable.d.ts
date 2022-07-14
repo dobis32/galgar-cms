@@ -12,7 +12,7 @@ export declare class SymbolTable {
     resolveSymbol(symbolName: string, enumerationMap?: {
         [key: string]: number;
     }): any;
-    resolveTruthySymbol(symbolName: string, iterationMap: {
+    resolveTruthySymbol(symbolName: string, enumerationMap?: {
         [key: string]: number;
     }): boolean;
     getContext(index?: number): iSymbolContext;

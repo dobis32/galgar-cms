@@ -72,9 +72,9 @@ export class SymbolTable {
         }
         return ret;
     }
-    resolveTruthySymbol(symbolName, iterationMap) {
+    resolveTruthySymbol(symbolName, enumerationMap) {
         let ret = false;
-        const symbol = this.resolveSymbol(symbolName, iterationMap);
+        const symbol = this.resolveSymbol(symbolName, enumerationMap);
         if (typeof symbol == 'function') {
             const result = symbol();
             ret = result ? true : false;

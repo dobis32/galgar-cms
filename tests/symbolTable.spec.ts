@@ -10,16 +10,21 @@ describe('symbolTable.ts', () => {
     let symbolTable: SymbolTable;
     let enumSymbol1: Array<string>;
     let enumSymbol2: Array<string>;
+    let enumSymbol3: Array<string>;
     let complexEnumSymbol: Array<{ [key: string]: any }>;
     let complexSymbol1: { [key: string]: any };
     let complexKey1: string;
     let complexKey2: string;
+    let complexValue: string;
     let st1_symbolName1: string;
     let st1_symbolName2: string;
     let st1_symbolName3: string;
+    let st2_symbolValue1: string;
     let st2_symbolName1: string;
-    let st2_symbolName2: string;
+    let st2_symbolName2: any;
     let st2_symbolName3: string;
+    let st2_symbolName4: string;
+    let st2_symbolName5: string;
     let st1: iSymbolTable;
     let st2: iSymbolTable;
     let ctx1: iSymbolContext;
@@ -28,13 +33,14 @@ describe('symbolTable.ts', () => {
     beforeEach(() => {
         enumSymbol1 = ['abc', 'def', 'ghi'];
         enumSymbol2 = ['jkl', 'mno', 'pqrs'];
+        enumSymbol3 = [ 'foo', 'bar', 'fizz', 'buzz'];
         complexEnumSymbol = [ { COMPLEX_ENUM_KEY1: { COMPLEX_ENUM_KEY2: 'hello :)'} }, { COMPLEX_ENUM_KEY1: { COMPLEX_ENUM_KEY2: 'hello world!'} } ]
         complexKey1 = 'complex_key1';
         complexKey2 = 'complex_key2';
-
+        complexValue = 'value_of_some_complex_symbol';
         complexSymbol1 = {}
         complexSymbol1[complexKey1] = {};
-        complexSymbol1[complexKey1][complexKey2] = 'hello world';
+        complexSymbol1[complexKey1][complexKey2] = complexValue;
 
         st1_symbolName1 = 'foo';
         st1_symbolName2 = 'bar';
@@ -48,14 +54,19 @@ describe('symbolTable.ts', () => {
             aliases: { },
             props: st1
         }
-
-        st2_symbolName1 = 'fizz';
-        st2_symbolName2 = 'someEnum';
+        st2_symbolValue1 = 'fizz';
+        st2_symbolName1 = st2_symbolValue1;
+        st2_symbolName2 = enumSymbol3;
         st2_symbolName3 = 'someComplex';
+        st2_symbolName4 = 'truthy_symbol';
+        st2_symbolName5 = 'falsy_symbol';
+
         st2 = {};
         st2[st2_symbolName1] = 'more_data';
         st2[st2_symbolName2] = enumSymbol1;
         st2[st2_symbolName3] = complexSymbol1;
+        st2[st2_symbolName4] = 'truthy_value';
+        st2[st2_symbolName5] = NaN; // falsy symbol
         const ctx2_aliases: { [key: string]: any } = {};
         ctx2_aliases[ENUM_ALIAS] = enumSymbol2;
         ctx2_aliases[COMPLEX_ENUM_ALIAS] = complexEnumSymbol;
@@ -126,7 +137,7 @@ describe('symbolTable.ts', () => {
         expect(symbolTable.resolveEnumerableSymbol).toBeDefined();
         expect(typeof symbolTable.resolveEnumerableSymbol).toEqual('function');
         expect(symbolTable.resolveSymbol).toHaveBeenCalledWith(targetEnum, undefined);
-        expect(result1 === enumSymbol1).toEqual(true)
+        expect(result1 === enumSymbol1).toEqual(true);
     });
 
     it('should have a function to resolve a symbol in the top-level symbol context', () => {
@@ -166,4 +177,90 @@ describe('symbolTable.ts', () => {
         const result: any = symbolTable.resolveSymbol(complexSymbol, enumMap);
         expect(result).toEqual(expected);
     });
+
+    it('should have a function to resolve a truthy symbol', () => {
+        symbolTable.resolveTruthySymbol = jest.fn(symbolTable.resolveTruthySymbol);
+        const truthySymbolName: string = st2_symbolName4;
+        const falsySymbolname: string= st2_symbolName5;
+        const expectedValue1: boolean = true;
+        const result1 = symbolTable.resolveTruthySymbol(truthySymbolName);
+        const result2 = symbolTable.resolveTruthySymbol(falsySymbolname);
+        expect(symbolTable.resolveTruthySymbol).toBeDefined();
+        expect(typeof symbolTable.resolveTruthySymbol).toEqual('function');
+        expect(symbolTable.resolveSymbol(truthySymbolName)).toBeTruthy();
+        expect(symbolTable.resolveSymbol(falsySymbolname)).toBeFalsy();
+        expect(typeof result1).toEqual('boolean');
+        expect(typeof result2).toEqual('boolean');
+        expect(result1).toBeTruthy();
+        expect(result2).toBeFalsy();
+    });
+
+    it('should have a function to get the top-level symbol context', () => {
+        const result: iSymbolContext = symbolTable.getContext();
+        expect(symbolTable.getContext).toBeDefined();
+        expect(typeof symbolTable.getContext).toEqual('function');
+        expect(result).toEqual(ctx2);
+
+    });
+
+    it('should have a function to get a symbol context at the specified level', () => {
+        const targetIndex: number = 0;
+        const result: iSymbolContext = symbolTable.getContext(targetIndex);
+        expect(symbolTable.getContext).toBeDefined();
+        expect(typeof symbolTable.getContext).toEqual('function');
+        expect(result).toEqual(ctx1);
+    });
+
+    it('should have a function to set the props of the top-level symboltable', () => {
+        const testST: iSymbolTable = {
+            'this_test_value': 1234567
+        };
+        symbolTable.setContextProps(testST);
+        const topLevelcontext: iSymbolContext = symbolTable.getContext();
+        expect(symbolTable.setContextProps).toBeDefined();
+        expect(typeof symbolTable.setContextProps).toEqual('function');
+        expect(topLevelcontext.props).toEqual(testST);
+    });
+
+    it('should have a function to set the props of a symboltable at the specified level', () => {
+        const testST: iSymbolTable = {
+            'this_test_value': 1234567
+        };
+        const targetIndex: number = 0;
+        symbolTable.setContextProps(testST, targetIndex);
+        const targetLevelContext: iSymbolContext = symbolTable.getContext(targetIndex);
+        expect(symbolTable.setContextProps).toBeDefined();
+        expect(typeof symbolTable.setContextProps).toEqual('function');
+        expect(targetLevelContext.props).toEqual(testST);
+    });
+
+    it('should have a function to walk to a deep value', () => {
+        const complexRoot: string = st2_symbolName3;
+        const complexSymbolTokens: Array<string> = [complexRoot, complexKey1, complexKey2];
+        const result: any = symbolTable.walkToValue(complexSymbolTokens, st2);
+        expect(symbolTable.setContextProps).toBeDefined();
+        expect(typeof symbolTable.setContextProps).toEqual('function');
+        expect(result).toEqual(complexValue);
+    });
+
+    it('should have a function to lookup a symbol from the top-level context', () => {
+        const targetSymbol: string = st2_symbolName1;
+        const expectedValue: string = st2_symbolValue1;
+        const result: any = symbolTable.lookupSymbol(targetSymbol);
+        expect(symbolTable.lookupSymbol).toBeDefined();
+        expect(typeof symbolTable.lookupSymbol).toEqual('function');
+        expect(result).toEqual(expectedValue);
+    
+    });
+
+    it('should have a function to look up a specified enumeration of a top-level aliased symbol', () => {
+        const targetSymbol: string = COMPLEX_ENUM_ALIAS;
+        const targetEnum: number = 1;
+        const expectedValue: string = COMPLEX_ENUM_ALIAS[targetEnum];
+        const result: any = symbolTable.lookupSymbol(targetSymbol, targetEnum);
+        expect(symbolTable.lookupSymbol).toBeDefined();
+        expect(typeof symbolTable.lookupSymbol).toEqual('function');
+        expect(result).toEqual(expectedValue);
+    });
+
 });

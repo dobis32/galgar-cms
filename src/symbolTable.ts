@@ -78,9 +78,9 @@ export class SymbolTable {
         return ret;
     }
 
-    resolveTruthySymbol(symbolName: string, iterationMap: { [key: string]: number }): boolean {
+    resolveTruthySymbol(symbolName: string, enumerationMap?: { [key: string]: number }): boolean {
         let ret: boolean = false;
-        const symbol = this.resolveSymbol(symbolName, iterationMap);
+        const symbol = this.resolveSymbol(symbolName, enumerationMap);
         if (typeof symbol == 'function') {
             const result = symbol() as Function;
             ret = result ? true : false;
