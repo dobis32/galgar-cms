@@ -21,7 +21,7 @@ describe('symbolTable.ts', () => {
     let st1_symbolName3: string;
     let st2_symbolValue1: string;
     let st2_symbolName1: string;
-    let st2_symbolName2: any;
+    let st2_enumSymbolName: string;
     let st2_symbolName3: string;
     let st2_symbolName4: string;
     let st2_symbolName5: string;
@@ -56,14 +56,14 @@ describe('symbolTable.ts', () => {
         }
         st2_symbolValue1 = 'fizz';
         st2_symbolName1 = st2_symbolValue1;
-        st2_symbolName2 = enumSymbol3;
+        st2_enumSymbolName = 'ENUM_SYMBOL';
         st2_symbolName3 = 'someComplex';
         st2_symbolName4 = 'truthy_symbol';
         st2_symbolName5 = 'falsy_symbol';
 
         st2 = {};
         st2[st2_symbolName1] = 'more_data';
-        st2[st2_symbolName2] = enumSymbol1;
+        st2[st2_enumSymbolName] = enumSymbol1;
         st2[st2_symbolName3] = complexSymbol1;
         st2[st2_symbolName4] = 'truthy_value';
         st2[st2_symbolName5] = NaN; // falsy symbol
@@ -132,12 +132,15 @@ describe('symbolTable.ts', () => {
 
     it('should have a function to resolve an enumerable symbol from the top-level symbol context', () => {
         symbolTable.resolveSymbol = jest.fn(symbolTable.resolveSymbol);
-        const targetEnum: string = 'someEnum';
-        const result1: Array<any> = symbolTable.resolveEnumerableSymbol('someEnum')
+        const targetEnumSymbol: string = st2_enumSymbolName;
+        const topLevelContext: iSymbolContext = symbolTable.getContext();
+        const epxectedEnum: Array<any> = topLevelContext.props[targetEnumSymbol];
+        const result1: Array<any> = symbolTable.resolveEnumerableSymbol(targetEnumSymbol);
         expect(symbolTable.resolveEnumerableSymbol).toBeDefined();
         expect(typeof symbolTable.resolveEnumerableSymbol).toEqual('function');
-        expect(symbolTable.resolveSymbol).toHaveBeenCalledWith(targetEnum, undefined);
-        expect(result1 === enumSymbol1).toEqual(true);
+        expect(symbolTable.resolveSymbol).toHaveBeenCalledWith(targetEnumSymbol, undefined);
+        expect(Array.isArray(result1)).toEqual(true);
+        expect(result1 === epxectedEnum).toEqual(true);
     });
 
     it('should have a function to resolve a symbol in the top-level symbol context', () => {
@@ -244,8 +247,9 @@ describe('symbolTable.ts', () => {
     });
 
     it('should have a function to lookup a symbol from the top-level context', () => {
+        const topLevelContext: iSymbolContext = symbolTable.getContext();
         const targetSymbol: string = st2_symbolName1;
-        const expectedValue: string = st2_symbolValue1;
+        const expectedValue: string = topLevelContext.props[st2_symbolName1];
         const result: any = symbolTable.lookupSymbol(targetSymbol);
         expect(symbolTable.lookupSymbol).toBeDefined();
         expect(typeof symbolTable.lookupSymbol).toEqual('function');
@@ -256,11 +260,13 @@ describe('symbolTable.ts', () => {
     it('should have a function to look up a specified enumeration of a top-level aliased symbol', () => {
         const targetSymbol: string = COMPLEX_ENUM_ALIAS;
         const targetEnum: number = 1;
-        const expectedValue: string = COMPLEX_ENUM_ALIAS[targetEnum];
+        const topLevelContext: iSymbolContext = symbolTable.getContext();
+        const expectedValue: string = topLevelContext.aliases[COMPLEX_ENUM_ALIAS][targetEnum];
         const result: any = symbolTable.lookupSymbol(targetSymbol, targetEnum);
         expect(symbolTable.lookupSymbol).toBeDefined();
         expect(typeof symbolTable.lookupSymbol).toEqual('function');
         expect(result).toEqual(expectedValue);
+
     });
 
 });

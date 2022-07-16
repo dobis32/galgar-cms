@@ -24,8 +24,24 @@ export const CONTROL_COMPONENT_TOKEN: string = '$CONTROL_COMPONENT_TOKEN_____';
 export const CONTROL_PROPS_TOKEN: string = '$CONTROL_PROPS_TOKEN_____';
 
 
+export const _ALL_TOKEN_TYPES: Array<string> = [
+    _TYPE_BLANK_TOKEN
+    , _TYPE_BAD_TOKEN
+    , _TYPE_INVALID_INPUT
+    , _TYPE_EOF_TOKEN
+    , _TYPE_WHITESPACE_TOKEN
+    , _TYPE_HTML_TOKEN
+    , _TYPE_INJECTION_TOKEN
+    , _TYPE_CONTENT_TOKEN
+    , _TYPE_CONTROL_GENERIC_TOKEN
+    , _TYPE_CONTROL_IF_TOKEN
+    , _TYPE_CONTROL_FOR_TOKEN
+    , _TYPE_CONTROL_IMPORT_TOKEN
+    , _TYPE_CONTROL_COMPONENT_TOKEN
+    , _TYPE_CONTROL_PROPS_TOKEN
+];
 
-export const _TYPE_SUPPORTED_TOKEN: Array<string> = [ 
+export const _SUPPORTED_TOKE_TYPES: Array<string> = [ 
     _TYPE_HTML_TOKEN
     , _TYPE_CONTROL_GENERIC_TOKEN
     , _TYPE_INJECTION_TOKEN
@@ -34,7 +50,7 @@ export const _TYPE_SUPPORTED_TOKEN: Array<string> = [
 
  ];
 
-export const _CONTROL_TOKEN_NAMES: Array<string> = [
+export const _ALL_CONTROL_TOKEN_NAMES: Array<string> = [
     , CONTROLIF_IF_TOKEN
     , CONTROLIF_ELSEIF_TOKEN
     , CONTROLIF_ELSE_TOKEN

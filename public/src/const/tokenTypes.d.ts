@@ -22,8 +22,9 @@ export declare const CONTROL_IMPORT_TOKEN: string;
 export declare const CONTROL_TOKEN_SUFFIX: string;
 export declare const CONTROL_COMPONENT_TOKEN: string;
 export declare const CONTROL_PROPS_TOKEN: string;
-export declare const _TYPE_SUPPORTED_TOKEN: Array<string>;
-export declare const _CONTROL_TOKEN_NAMES: Array<string>;
+export declare const _ALL_TOKEN_TYPES: Array<string>;
+export declare const _SUPPORTED_TOKE_TYPES: Array<string>;
+export declare const _ALL_CONTROL_TOKEN_NAMES: Array<string>;
 export declare const _CONTROL_NAME_MAP: {
     [key: string]: string;
 };
