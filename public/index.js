@@ -68,11 +68,15 @@ const TESTING_HTML_TABLE_AS_TOKENS = [
         enumerationMap: {}
     }
 ];
+const HEADING_WITH_CONTENT_AS_STRING = '<h1>Hello world!</h1>';
 const grammar = new Grammar([HTML_RULE, CONTROL_RULE]);
-const ORIGINAL_INPUT = TESTING_HTML_TABLE_AS_STRING;
-const lexer = new Lexer(ORIGINAL_INPUT, grammar);
-const input = TESTING_HTML_TABLE_AS_STRING;
+const lexer = new Lexer(HEADING_WITH_CONTENT_AS_STRING, grammar);
+const input = lexer.getInput();
 const rules = grammar.getRules();
-const result1 = lexer.getNextLexPosition(input, rules);
-const result2 = lexer.getNextLexPosition(input, rules, result1.position.next - 1);
-const pos = lexer.getRulePosition(input.substring(result1.position.next), HTML_RULE);
+const match1 = lexer.getNextLexPosition(input, rules);
+const tok1 = lexer.generateToken(match1.position, input, match1.matchedRule);
+const adjustedInput = input.substring(tok1.raw.length);
+const match2 = lexer.getNextLexPosition(adjustedInput, rules);
+const tok2 = lexer.generateToken(match2.position, adjustedInput, match2.matchedRule);
+console.log(tok1);
+console.log(tok2);

@@ -15,7 +15,7 @@ export default class Lexer {
     };
     getRulePosition(input: string, r: iRule): iLexPosition;
     generateToken(pos: iLexPosition, input: string, matchedRule: iRule): iToken;
-    processIntermediateContent(endIndex: number, input: string): iToken;
+    tokenizeIntermediateContent(endIndex: number, input: string): iToken;
     getControlTokenName(input: string): string;
     getMappedControlTokenName(name: string): string;
     validateToken(pos: iLexPosition, rule: iRule, input: string): iToken;

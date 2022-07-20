@@ -67,8 +67,10 @@ export default class Lexer {
         const e: string = r.end;
         ret.start = input.indexOf(s);
         ret.end = input.indexOf(e);
-        ret.next = input.substring(ret.start + 1).indexOf(s) + 1;
-
+        const offset: number = 1;
+        const next: number = input.substring(ret.start + offset).indexOf(s);
+        ret.next = next;
+        if (next >= 0) ret.next += 1;
         return ret;
     }
 
@@ -76,17 +78,17 @@ export default class Lexer {
         let ret: iToken = BLANK_TOKEN;
         let { start } = pos;
         if (start == -1) ret = INVALID_INPUT_TOKEN; // no token found
-        else if (start != 0) ret = this.processIntermediateContent(start, input); // white-space token or content token found
+        else if (start != 0) ret = this.tokenizeIntermediateContent(start, input); // white-space token or content token found
         else ret = this.validateToken(pos, matchedRule, input); // start position is zero, token found
         return ret;
     }
 
-    processIntermediateContent(endIndex: number, input: string): iToken {
+    tokenizeIntermediateContent(endIndex: number, input: string): iToken {
         let ret: iToken = BLANK_TOKEN;
         const token: string = input.substring(0, endIndex);
         const trimmed = token.split('\t').filter((t) => t.length > 0).join('').trim();
         if (trimmed.length == 0) { // is it just white space?
-            ret.value = token; // be sure to preserve length of whitespace
+            ret.value = trimmed; // be sure to preserve length of whitespace
             ret.type = _TYPE_WHITESPACE_TOKEN; 
             ret.name = INTERMEDIATE_CONTENT;
         } else {
@@ -143,7 +145,7 @@ export default class Lexer {
         let { start, end, next } = pos;
         let ret: iToken = Object.assign({}, BLANK_TOKEN);
         // determine validity of token:
-        // 1. should have non-zero  token end position
+        // 1. should have non-zero token end position
         // 2. and the next token start should come after said token end position
         if (end < 0 || (next < end && next != -1)) { // token is invalid
             ret = INVALID_INPUT_TOKEN;
