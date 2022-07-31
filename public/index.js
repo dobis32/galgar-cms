@@ -1,82 +1,16 @@
-import { _TYPE_CONTENT_TOKEN, _TYPE_HTML_TOKEN } from './src/const/tokenTypes';
-import Lexer from './src/lexer';
-import Grammar from './src/grammar';
-import { HTML_RULE, CONTROL_RULE, INTERMEDIATE_CONTENT } from './src/const/const';
-const TESTING_HTML_TABLE_AS_STRING = `<table><tr><td><h2>hello world!</h2></td></tr></table>`;
-const TESTING_HTML_TABLE_AS_TOKENS = [
-    {
-        type: _TYPE_HTML_TOKEN,
-        value: '<table>',
-        raw: '<table>',
-        name: 'table',
-        enumerationMap: {}
+import { SymbolTable } from './src/symbolTable';
+import { AlgebraSolver } from './src/bool';
+const ctx1 = {
+    aliases: {
+        foo: 'bar',
+        fizz: false
     },
-    {
-        type: _TYPE_HTML_TOKEN,
-        value: '<tr>',
-        raw: '<tr>',
-        name: 'tr',
-        enumerationMap: {}
-    },
-    {
-        type: _TYPE_HTML_TOKEN,
-        value: '<td>',
-        raw: '<td>',
-        name: 'td',
-        enumerationMap: {}
-    },
-    {
-        type: _TYPE_HTML_TOKEN,
-        value: '<h2>',
-        raw: '<h2>',
-        name: 'h2',
-        enumerationMap: {}
-    },
-    {
-        type: _TYPE_CONTENT_TOKEN,
-        value: 'hello world!',
-        raw: 'hello world!',
-        name: INTERMEDIATE_CONTENT,
-        enumerationMap: {}
-    },
-    {
-        type: _TYPE_HTML_TOKEN,
-        value: '</h2>',
-        raw: '</h2>',
-        name: '',
-        enumerationMap: {}
-    },
-    {
-        type: _TYPE_HTML_TOKEN,
-        value: '</td>',
-        raw: '</td>',
-        name: '',
-        enumerationMap: {}
-    },
-    {
-        type: _TYPE_HTML_TOKEN,
-        value: '</tr>',
-        raw: '</tr>',
-        name: '',
-        enumerationMap: {}
-    },
-    {
-        type: _TYPE_HTML_TOKEN,
-        value: '</table>',
-        raw: '</table>',
-        name: '',
-        enumerationMap: {}
+    props: {
+        bar: 456,
+        buzz: -123
     }
-];
-const HEADING_WITH_CONTENT_AS_STRING = '<h1>Hello world!</h1>';
-const grammar = new Grammar([HTML_RULE, CONTROL_RULE]);
-const lexer = new Lexer(HEADING_WITH_CONTENT_AS_STRING, grammar);
-const input = lexer.getInput();
-const rules = grammar.getRules();
-const match1 = lexer.getNextLexPosition(input, rules);
-const tok1 = lexer.generateToken(match1.position, input, match1.matchedRule);
-const adjustedInput = input.substring(tok1.raw.length);
-const match2 = lexer.getNextLexPosition(adjustedInput, rules);
-const tok2 = lexer.generateToken(match2.position, adjustedInput, match2.matchedRule);
-console.log(tok1);
-console.log(tok2);
+};
+const truthyExpression = `foo`;
+const st = new SymbolTable([ctx1]);
+const solver = new AlgebraSolver(st, {});
+console.log(solver.solveSimpleExpression(truthyExpression));
