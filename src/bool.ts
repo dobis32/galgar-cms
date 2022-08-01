@@ -73,7 +73,7 @@ export class AlgebraSolver {
 
     solveSimpleExpression(expression: string): boolean {
         let result: boolean = false;
-        if (expression.indexOf(ALGEBRAIC_AND) || expression.indexOf(ALGEBRAIC_OR)) throw new Error('[ ALGEBRA SOLVER ] solveSimpleExpression(): found a logical operator in a simple exprssion');
+        if (expression.indexOf(ALGEBRAIC_AND) >= 0 || expression.indexOf(ALGEBRAIC_OR) >= 0) throw new Error('[ ALGEBRA SOLVER ] solveSimpleExpression(): found a logical operator in a simple exprssion');
         const expressionTokens: Array<string> = expression.split(' ').filter((s: string) => s.length > 0);
         let negate: boolean = false;
         while (expressionTokens[0] == ALGEBRAIC_NOT) {

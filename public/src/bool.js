@@ -74,7 +74,7 @@ export class AlgebraSolver {
     }
     solveSimpleExpression(expression) {
         let result = false;
-        if (expression.indexOf(ALGEBRAIC_AND) || expression.indexOf(ALGEBRAIC_OR))
+        if (expression.indexOf(ALGEBRAIC_AND) >= 0 || expression.indexOf(ALGEBRAIC_OR) >= 0)
             throw new Error('[ ALGEBRA SOLVER ] solveSimpleExpression(): found a logical operator in a simple exprssion');
         const expressionTokens = expression.split(' ').filter((s) => s.length > 0);
         let negate = false;

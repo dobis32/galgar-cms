@@ -1,16 +1,40 @@
 import { SymbolTable } from './src/symbolTable';
+import { ALGEBRAIC_OR, ALGEBRAIC_AND } from './src/const/const';
 import { AlgebraSolver } from './src/bool';
-const ctx1 = {
-    aliases: {
-        foo: 'bar',
-        fizz: false
-    },
-    props: {
-        bar: 456,
-        buzz: -123
-    }
-};
-const truthyExpression = `foo`;
-const st = new SymbolTable([ctx1]);
-const solver = new AlgebraSolver(st, {});
-console.log(solver.solveSimpleExpression(truthyExpression));
+const ALIAS_1_1_VALUE = '';
+const ALIAS_1_1_NAME = 'alias1';
+const ALIAS_1_2_VALUE = 456;
+const ALIAS_1_2_NAME = 'alias2';
+const ALIAS_2_1_VALUE = 'asdf';
+const ALIAS_2_1_NAME = 'alias1';
+const ALIAS_2_2_VALUE = 123;
+const ALIAS_2_2_NAME = 'alias2';
+const PROPS_2_1_VALUE = true;
+const PROPS_2_1_NAME = 'props1';
+const PROPS_2_2_VALUE = false;
+const PROPS_2_2_NAME = 'props2';
+const ctx1Aliases = {};
+const ctx1Props = {};
+const ctx2Aliases = {};
+const ctx2Props = {};
+let initialSymbolContext1;
+let initialSymbolContext2;
+let initialSymbolTable;
+let enumMap;
+let solver;
+let simpleTruthyExpression = `${PROPS_2_1_NAME}`;
+let complexTruthyExpression = `${PROPS_2_1_NAME} ${ALGEBRAIC_OR} ${PROPS_2_2_NAME}`;
+let simpleFalsyExpression = `${PROPS_2_2_NAME}`;
+let complexFalsyExpression = `${PROPS_2_1_NAME} ${ALGEBRAIC_AND} ${PROPS_2_2_NAME}`;
+ctx2Aliases[ALIAS_2_1_NAME] = ALIAS_2_1_VALUE;
+ctx2Aliases[ALIAS_2_2_NAME] = ALIAS_2_2_VALUE;
+ctx2Props[PROPS_2_1_NAME] = PROPS_2_1_VALUE;
+ctx2Props[PROPS_2_2_NAME] = PROPS_2_2_VALUE;
+ctx1Aliases[ALIAS_1_1_NAME] = ALIAS_1_1_VALUE;
+ctx1Aliases[ALIAS_1_2_NAME] = ALIAS_1_2_VALUE;
+enumMap = {};
+initialSymbolContext1 = { aliases: ctx1Aliases, props: ctx1Props };
+initialSymbolContext2 = { aliases: ctx2Aliases, props: ctx2Props };
+initialSymbolTable = new SymbolTable([initialSymbolContext1, initialSymbolContext2]);
+solver = new AlgebraSolver(initialSymbolTable, enumMap);
+//const result: boolean = solver.solveSimpleExpression(truthyExpression1);
