@@ -7,33 +7,34 @@ import { ValueInjector } from "./injector";
 import { TokenIdentifier } from "./tokenIdentifier";
 
 export default class TokenParser {
-    // private input: Array<iToken>;
-    // private validInput: boolean;
+    private input: Array<iToken>;
+    private initProps: Array<string>;
     private symbolTable: SymbolTable;
     private outputTokens: Array<iToken>;
-    private componentMap: iComponentMap;
+    // private componentMap: iComponentMap;
     private componentAliasStack: Array<iComponentMap>;
-    constructor (st: SymbolTable, cm: iComponentMap) {
-        //this.input = tokens;
-        //this.validInput = false;
+    constructor (tokens: Array<iToken>, st: SymbolTable, initProps: Array<string>, cas?: Array<iComponentMap>) {
+        this.input = tokens;
         this.outputTokens = [ ];
+        this.initProps = initProps;
         this.symbolTable = st; 
-        this.componentMap = cm;
-        this.componentAliasStack = [ ];
+        // this.componentMap = cm;
+        this.componentAliasStack = cas ? cas : [ ];
     }
 
     getSymbolTable(): SymbolTable {
         return this.symbolTable;
     }
 
-    getComponentMap(): iComponentMap {
-        return this.componentMap;
-    }
+    // getComponentMap(): iComponentMap {
+    //     return this.componentMap;
+    // }
 
-    parse(inputTokens: Array<iToken>, initProps: Array<string>): Array<iToken> {
-        const isValid: boolean = this.validate(inputTokens);
+    parse(initProps?: Array<string>): Array<iToken> {
+        const props: Array<string> = initProps ? initProps : [];
+        const isValid: boolean = this.validate(this.input);
         if (isValid == false) throw new Error('[ PARSER ERROR ] parse(): Input not valid; be sure to run validate()');
-        const outputTokens = this.initParse(inputTokens, initProps);
+        const outputTokens = this.initParse(this.input, props);
         return outputTokens;
     }
 
@@ -146,10 +147,11 @@ export default class TokenParser {
     }
 
     private parseComponentControl(controlToken: iToken): void {
+        const compMap: iComponentMap = this.getAliasComponentMap();
         const temp: Array<string> = controlToken.value.split(' '); // [[ #IMPORT Component AS Alias ]]
         const identifier: string = temp[2].split('/').pop() as string;
         const alias: string = temp[4] ? temp[4] : identifier;
-        const component: iComponentReference = this.componentMap[identifier];
+        const component: iComponentReference = compMap[identifier];
         if (component == undefined) throw new Error('[ PARSER ERROR ] parseComponentControl(): Failed to find component reference with identifier ' + identifier);
         this.setComponentAlias(component, alias)
     }
