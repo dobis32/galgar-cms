@@ -7,40 +7,49 @@ import Lexer from './src/lexer';
 import Grammar from './src/grammar';
 import { ALGEBRAIC_OR, ALGEBRAIC_AND, ALGEBRAIC_NOT, HTML_RULE, CONTROL_RULE, INTERMEDIATE_CONTENT, BAD_TOKEN, INVALID_TOKEN_NAME, INVALID_INPUT_TOKEN } from './src/const/const';
 import { AlgebraSolver } from './src/bool';
-const ALIAS_1_1_VALUE: string = '';
-const ALIAS_1_1_NAME: string = 'alias1';
-const ALIAS_1_2_VALUE: number = 456;
-const ALIAS_1_2_NAME: string = 'alias2';
-const ALIAS_2_1_VALUE: string = 'asdf';
-const ALIAS_2_1_NAME: string = 'alias1';
-const ALIAS_2_2_VALUE: number = 123;
-const ALIAS_2_2_NAME: string = 'alias2';
-const PROPS_2_1_VALUE: boolean = true;
-const PROPS_2_1_NAME: string = 'props1';
-const PROPS_2_2_VALUE: boolean = false;
-const PROPS_2_2_NAME: string = 'props2';
-const ctx1Aliases: { [key: string]: any } = {};
-const ctx1Props: { [key: string]: any } = {};
-const ctx2Aliases: { [key: string]: any } = {};
-const ctx2Props: { [key: string]: any } = {};
-let initialSymbolContext1: iSymbolContext;
-let initialSymbolContext2: iSymbolContext;
-let initialSymbolTable: SymbolTable;
-let enumMap: iEnumerationMap;
-let solver: AlgebraSolver;
-let simpleTruthyExpression: string = `${PROPS_2_1_NAME}`;
-let complexTruthyExpression: string = `${PROPS_2_1_NAME} ${ALGEBRAIC_OR} ${PROPS_2_2_NAME}`;
-let simpleFalsyExpression: string = `${PROPS_2_2_NAME}`;
-let complexFalsyExpression: string = `${PROPS_2_1_NAME} ${ALGEBRAIC_AND} ${PROPS_2_2_NAME}`;
-ctx2Aliases[ALIAS_2_1_NAME] = ALIAS_2_1_VALUE;
-ctx2Aliases[ALIAS_2_2_NAME] = ALIAS_2_2_VALUE;
-ctx2Props[PROPS_2_1_NAME] = PROPS_2_1_VALUE;
-ctx2Props[PROPS_2_2_NAME] = PROPS_2_2_VALUE;
-ctx1Aliases[ALIAS_1_1_NAME] = ALIAS_1_1_VALUE;
-ctx1Aliases[ALIAS_1_2_NAME] = ALIAS_1_2_VALUE;
-enumMap = {};
-initialSymbolContext1 = { aliases: ctx1Aliases, props: ctx1Props };
-initialSymbolContext2 = { aliases: ctx2Aliases, props: ctx2Props };
-initialSymbolTable = new SymbolTable([ initialSymbolContext1, initialSymbolContext2 ]);
-solver = new AlgebraSolver(initialSymbolTable, enumMap);
-//const result: boolean = solver.solveSimpleExpression(truthyExpression1);
+
+interface iTestPackage {
+    component: iComponentReference;
+    symbolTableStack: Array<iSymbolContext>;
+}
+
+const TEST_COMPONENT_DYNAMIC_HEADER: iComponentReference = {
+    name: 'TEST COMPONENT DYNAMIC HEADER',
+    raw: '<h1>{{ msg }}</h1>',
+    tokens: [
+        {
+            type: _TYPE_HTML_TOKEN,
+            value: '<h1>',
+            raw: '<h1>',
+            name: 'h1',
+            enumerationMap: {}
+        },
+        {
+            type: _TYPE_CONTENT_TOKEN,
+            value: '{{ msg }}',
+            raw: '{{ msg }}',
+            name: INTERMEDIATE_CONTENT,
+            enumerationMap: {}
+        },
+        {
+            type: _TYPE_HTML_TOKEN,
+            value: '</h1>',
+            raw: '</h1>',
+            name: 'h1',
+            enumerationMap: {}
+        }
+    ],
+    props: [ 'msg' ]
+}
+
+const TEST_PACKAGE_DYNAMIC_HEADER: iTestPackage = {
+    component: TEST_COMPONENT_DYNAMIC_HEADER,
+    symbolTableStack: [{ aliases: {}, props: { msg: 'this is a message ' } }]
+}
+
+const ctxStack: Array<iSymbolContext> = TEST_PACKAGE_DYNAMIC_HEADER.symbolTableStack;
+const st: SymbolTable = new SymbolTable(ctxStack);
+
+const result: iToken = ValueInjector.injectTokenSymbols(TEST_COMPONENT_DYNAMIC_HEADER.tokens[1], st);
+
+// const result: any = st.resolveSymbol('msg');

@@ -1,40 +1,40 @@
+import { ValueInjector } from './src/injector';
+import { _TYPE_CONTENT_TOKEN, _TYPE_HTML_TOKEN } from './src/const/tokenTypes';
 import { SymbolTable } from './src/symbolTable';
-import { ALGEBRAIC_OR, ALGEBRAIC_AND } from './src/const/const';
-import { AlgebraSolver } from './src/bool';
-const ALIAS_1_1_VALUE = '';
-const ALIAS_1_1_NAME = 'alias1';
-const ALIAS_1_2_VALUE = 456;
-const ALIAS_1_2_NAME = 'alias2';
-const ALIAS_2_1_VALUE = 'asdf';
-const ALIAS_2_1_NAME = 'alias1';
-const ALIAS_2_2_VALUE = 123;
-const ALIAS_2_2_NAME = 'alias2';
-const PROPS_2_1_VALUE = true;
-const PROPS_2_1_NAME = 'props1';
-const PROPS_2_2_VALUE = false;
-const PROPS_2_2_NAME = 'props2';
-const ctx1Aliases = {};
-const ctx1Props = {};
-const ctx2Aliases = {};
-const ctx2Props = {};
-let initialSymbolContext1;
-let initialSymbolContext2;
-let initialSymbolTable;
-let enumMap;
-let solver;
-let simpleTruthyExpression = `${PROPS_2_1_NAME}`;
-let complexTruthyExpression = `${PROPS_2_1_NAME} ${ALGEBRAIC_OR} ${PROPS_2_2_NAME}`;
-let simpleFalsyExpression = `${PROPS_2_2_NAME}`;
-let complexFalsyExpression = `${PROPS_2_1_NAME} ${ALGEBRAIC_AND} ${PROPS_2_2_NAME}`;
-ctx2Aliases[ALIAS_2_1_NAME] = ALIAS_2_1_VALUE;
-ctx2Aliases[ALIAS_2_2_NAME] = ALIAS_2_2_VALUE;
-ctx2Props[PROPS_2_1_NAME] = PROPS_2_1_VALUE;
-ctx2Props[PROPS_2_2_NAME] = PROPS_2_2_VALUE;
-ctx1Aliases[ALIAS_1_1_NAME] = ALIAS_1_1_VALUE;
-ctx1Aliases[ALIAS_1_2_NAME] = ALIAS_1_2_VALUE;
-enumMap = {};
-initialSymbolContext1 = { aliases: ctx1Aliases, props: ctx1Props };
-initialSymbolContext2 = { aliases: ctx2Aliases, props: ctx2Props };
-initialSymbolTable = new SymbolTable([initialSymbolContext1, initialSymbolContext2]);
-solver = new AlgebraSolver(initialSymbolTable, enumMap);
-//const result: boolean = solver.solveSimpleExpression(truthyExpression1);
+import { INTERMEDIATE_CONTENT } from './src/const/const';
+const TEST_COMPONENT_DYNAMIC_HEADER = {
+    name: 'TEST COMPONENT DYNAMIC HEADER',
+    raw: '<h1>{{ msg }}</h1>',
+    tokens: [
+        {
+            type: _TYPE_HTML_TOKEN,
+            value: '<h1>',
+            raw: '<h1>',
+            name: 'h1',
+            enumerationMap: {}
+        },
+        {
+            type: _TYPE_CONTENT_TOKEN,
+            value: '{{ msg }}',
+            raw: '{{ msg }}',
+            name: INTERMEDIATE_CONTENT,
+            enumerationMap: {}
+        },
+        {
+            type: _TYPE_HTML_TOKEN,
+            value: '</h1>',
+            raw: '</h1>',
+            name: 'h1',
+            enumerationMap: {}
+        }
+    ],
+    props: ['msg']
+};
+const TEST_PACKAGE_DYNAMIC_HEADER = {
+    component: TEST_COMPONENT_DYNAMIC_HEADER,
+    symbolTableStack: [{ aliases: {}, props: { msg: 'this is a message ' } }]
+};
+const ctxStack = TEST_PACKAGE_DYNAMIC_HEADER.symbolTableStack;
+const st = new SymbolTable(ctxStack);
+const result = ValueInjector.injectTokenSymbols(TEST_COMPONENT_DYNAMIC_HEADER.tokens[1], st);
+// const result: any = st.resolveSymbol('msg');

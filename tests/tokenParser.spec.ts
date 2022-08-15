@@ -6,11 +6,9 @@ import { TEST_PACKAGE_DYNAMIC_HEADER, TESTING_COMPONENT_REF_MAP } from './helper
 describe('tokenParser.ts', () => {
     let componentMapStack : Array<iComponentMap>;
     let parser: TokenParser;
-    let compMap: iComponentMap;
     let st: SymbolTable;
     let tokens: Array<iToken>;
     beforeEach(() => {
-        compMap = {};
         componentMapStack = [ TESTING_COMPONENT_REF_MAP ];
         const contextStack: Array<iSymbolContext> = TEST_PACKAGE_DYNAMIC_HEADER.symbolTableStack;
         const initProps: Array<string> = TEST_PACKAGE_DYNAMIC_HEADER.component.props;
@@ -21,9 +19,10 @@ describe('tokenParser.ts', () => {
 
     it('should have a function to parse the input tokens when the input is valid', () => {
         const testTokens: Array<iToken> = TEST_PACKAGE_DYNAMIC_HEADER.component.tokens;
+        const initProps: Array<string> = TEST_PACKAGE_DYNAMIC_HEADER.component.props;
         parser.validate = jest.fn(parser.validate);
         parser.initParse = jest.fn(parser.initParse);
-        const parsedTokens: Array<iToken> = parser.parse();
+        const parsedTokens: Array<iToken> = parser.parse(initProps);
         expect(parser.parse).toBeDefined();
         expect(typeof parser.parse).toEqual('function');
         expect(parser.validate).toHaveBeenCalled();

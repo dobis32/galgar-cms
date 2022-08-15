@@ -64,7 +64,7 @@ export class SymbolTable {
                 Object.keys(currentContext.aliases).forEach((key: string) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.aliases[key]));
                 Object.keys(currentContext.props).forEach((key: string) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.props[key]));
                 */
-                throw new Error('[ SYMBOL TABLE ] resolveSymbol(): failed to resolve symbol: ' + symbolName);
+                throw new Error('[ SYMBOL TABLE ] resolveSymbol(): failed to resolve symbol: ' + symbolName + ' length: ' + symbolName.length);
             }
         }
         catch (error) {
