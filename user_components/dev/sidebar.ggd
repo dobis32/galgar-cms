@@ -1,0 +1,9 @@
+[[ #COMPONENT dumb_button AS myButton ]]
+[[ #PROPS options ]]
+<div>
+    [[ #FOR op IN options ]]
+        <div style="margin: 6px 0px;">
+            <myButton label={{ op }} />
+        </div>
+    [[ #ENDFOR ]]
+</div>

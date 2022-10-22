@@ -1,46 +1,37 @@
-import * as fs from 'fs';
-import { ValueInjector } from './src/injector';
-import { iEnumerationMap, iRule, iLexPosition, iToken, iSymbolTable, iComponentReference, iSymbolContext } from './src/interfaces/interfaces';
-import { _TYPE_CONTENT_TOKEN, _TYPE_HTML_TOKEN, _TYPE_CONTROL_PROPS_TOKEN, CONTROL_PROPS_TOKEN } from './src/const/tokenTypes';
-import { SymbolTable } from './src/symbolTable';
-import Lexer from './src/lexer';
+import express from 'express';
+import * as path from 'path';
+import { _TYPE_BAD_TOKEN, _TYPE_EOF_TOKEN, _TYPE_HTML_TOKEN, _TYPE_INVALID_INPUT, _TYPE_WHITESPACE_TOKEN } from './src/const/tokenTypes';
+import { HTML_RULE, CONTROL_RULE } from './src/const/const';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { Galgar } from './src/galgar';
 import Grammar from './src/grammar';
-import { ALGEBRAIC_OR, ALGEBRAIC_AND, ALGEBRAIC_NOT, HTML_RULE, CONTROL_RULE, INTERMEDIATE_CONTENT, BAD_TOKEN, INVALID_TOKEN_NAME, INVALID_INPUT_TOKEN } from './src/const/const';
-import { AlgebraSolver } from './src/bool';
-const ALIAS_1_1_VALUE: string = '';
-const ALIAS_1_1_NAME: string = 'alias1';
-const ALIAS_1_2_VALUE: number = 456;
-const ALIAS_1_2_NAME: string = 'alias2';
-const ALIAS_2_1_VALUE: string = 'asdf';
-const ALIAS_2_1_NAME: string = 'alias1';
-const ALIAS_2_2_VALUE: number = 123;
-const ALIAS_2_2_NAME: string = 'alias2';
-const PROPS_2_1_VALUE: boolean = true;
-const PROPS_2_1_NAME: string = 'props1';
-const PROPS_2_2_VALUE: boolean = false;
-const PROPS_2_2_NAME: string = 'props2';
-const ctx1Aliases: { [key: string]: any } = {};
-const ctx1Props: { [key: string]: any } = {};
-const ctx2Aliases: { [key: string]: any } = {};
-const ctx2Props: { [key: string]: any } = {};
-let initialSymbolContext1: iSymbolContext;
-let initialSymbolContext2: iSymbolContext;
-let initialSymbolTable: SymbolTable;
-let enumMap: iEnumerationMap;
-let solver: AlgebraSolver;
-let simpleTruthyExpression: string = `${PROPS_2_1_NAME}`;
-let complexTruthyExpression: string = `${PROPS_2_1_NAME} ${ALGEBRAIC_OR} ${PROPS_2_2_NAME}`;
-let simpleFalsyExpression: string = `${PROPS_2_2_NAME}`;
-let complexFalsyExpression: string = `${PROPS_2_1_NAME} ${ALGEBRAIC_AND} ${PROPS_2_2_NAME}`;
-ctx2Aliases[ALIAS_2_1_NAME] = ALIAS_2_1_VALUE;
-ctx2Aliases[ALIAS_2_2_NAME] = ALIAS_2_2_VALUE;
-ctx2Props[PROPS_2_1_NAME] = PROPS_2_1_VALUE;
-ctx2Props[PROPS_2_2_NAME] = PROPS_2_2_VALUE;
-ctx1Aliases[ALIAS_1_1_NAME] = ALIAS_1_1_VALUE;
-ctx1Aliases[ALIAS_1_2_NAME] = ALIAS_1_2_VALUE;
-enumMap = {};
-initialSymbolContext1 = { aliases: ctx1Aliases, props: ctx1Props };
-initialSymbolContext2 = { aliases: ctx2Aliases, props: ctx2Props };
-initialSymbolTable = new SymbolTable([ initialSymbolContext1, initialSymbolContext2 ]);
-solver = new AlgebraSolver(initialSymbolTable, enumMap);
-//const result: boolean = solver.solveSimpleExpression(truthyExpression1);
+import { iSymbolTable } from './src/interfaces/interfaces';
+import galgarRouter from './src/routers/galgar.routers';
+
+const main = async () => {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const port = process.env.PORT || 3001;
+    const app = express();
+    const publicDirectoryPath = path.join(__dirname, '../public');
+    app.use(express.json({ limit: '50mb' }));
+    app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+    app.use(express.static(publicDirectoryPath));
+    app.use(galgarRouter);
+    app.listen(port, () => {
+        console.log('Server is up on port ' + port);
+    });
+};
+main();
+
+// const grammar: Grammar = new Grammar([ HTML_RULE, CONTROL_RULE ]);
+// const galgar = new Galgar(grammar);
+// const stData: iSymbolTable = {
+//     foobar: 'hello world',
+//     condition1: false,
+//     condition2: true,
+//     condition3: false
+// }
+// galgar.parseProgram('foobar', stData);
+

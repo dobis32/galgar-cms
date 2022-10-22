@@ -1,0 +1,2 @@
+[[ #PROPS label ]]
+<h2>{{ label }}</h2>

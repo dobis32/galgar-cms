@@ -1,0 +1,6 @@
+[[ #PROPS username, quote, id ]]
+<div>
+    <h2>{{ username }}</h2>
+    <h5>{{ id }}</h5>
+    <h3>{{ quote }}</h3>
+</div>

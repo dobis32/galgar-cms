@@ -1,0 +1,8 @@
+{
+    "stData": {
+        "condition1": true,
+        "condition2": false,
+        "condition3": true
+    },
+    "identifier": "tests\\conditionalRendering\\ifControlRendering"
+}

@@ -1,0 +1,17 @@
+{
+    "stData": {
+        "posts": [
+            {
+                "name": "this is the name of the post",
+                "author": "some author",
+                "body": "this is the body of the first post"
+            }, 
+            {
+                "name": "some other post",
+                "author": "some other author",
+                "body": "this is the body of the other (second) post"
+            }
+        ]
+    },
+    "identifier": "tests\\enumComponents\\enumComponents"
+}

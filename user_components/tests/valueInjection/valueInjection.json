@@ -1,0 +1,10 @@
+{
+    "stData": {
+        "myStyle1": "color: #f00; text-decoration: underline;",
+        "myClass1": "my-class-1", 
+        "myClass2": "my-class-2", 
+        "myContent1": "this is just some content",
+        "myContent2": "this is some other content"
+    },
+    "identifier": "tests\\valueInjector\\valueInjector"
+}

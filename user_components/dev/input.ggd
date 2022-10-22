@@ -1,0 +1,5 @@
+[[ #COMPONENT componentA AS CompA ]]
+[[ #PROPS mainArr ]]
+[[ #FOR x IN mainArr ]]
+    <CompA data={{ x }} />
+[[ #ENDFOR ]]

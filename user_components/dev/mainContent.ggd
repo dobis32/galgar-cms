@@ -1,0 +1,7 @@
+[[ #COMPONENT userPost AS post ]]
+[[ #PROPS posts ]]
+[[ #FOR p IN posts ]]
+    <div>
+        <post data={{ p }} />
+    </div>
+[[ #ENDFOR ]]

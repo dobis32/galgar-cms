@@ -1,0 +1,24 @@
+[[ #PROPS condition1, condition2, condition3 ]]
+[[ #IF condition1 ]]
+    <h2>condition 1 was true</h2>
+[[ #ENDIF ]]
+[[ #IF condition2 ]]
+    <h2>condition2 was true</h2>
+[[ #ELSEIF condition1 ]]
+    <h2>condition2 was false, but condition1 was true</h2>
+[[ #ENDIF ]]
+[[ #IF condition1 & condition3 ]]
+    <h2>condition1 and condition3 were true</h2>
+[[ #ELSE  ]]
+    <h2>either condition1 or condition3 were false</h2>
+[[ #ENDIF ]]
+[[ #IF condition1 ]]
+    [[ #IF NOT condition2 ]]
+        <h2>condition1 was true, and condition 2 was false</h2>
+    [[ #ELSE ]]
+        <h2>condition1 was true, and condition 2 was true</h2>
+    [[ #ENDIF ]]
+[[ #ENDIF ]]
+[[ #IF NOT condition2 ]]
+    <h2>as expected, condition2 was false</h2>
+[[ #ENDIF]]

@@ -1,0 +1,14 @@
+{
+    "stData": {
+        "userInfo": {
+            "username": "denny_dingus",
+            "id": "zxcvq3241",
+            "quote": "As you can see, it sucks while it cuts"
+        },
+        "postInfo": {
+            "postName": "What's the deal with airline food?",
+            "postBody": "this is the whole post -- you better believe it got you mad about something"
+        }
+    },
+    "identifier": "tests\\customComponent\\customComponent"
+}

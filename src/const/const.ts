@@ -8,7 +8,7 @@ import { _TYPE_BLANK_TOKEN } from './tokenTypes';
 const localdir = process.cwd();
 
 export const COMPONENT_FILE_PATH: string = localdir + '\\user_components\\';
-export const RENDERED_FILE_PATH: string = localdir + '\\rendered\\';
+export const RENDERED_FILE_PATH: string = localdir + '\\public\\rendered\\';
 export const SELF_CLOSING_TAG_TYPES: Array<string> = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
 export const CLOSING_EXEMPT_TAGS: Array<string> = ['meta'];
 export const BLANK_RULE: iRule = { type: _TYPE_BLANK_TOKEN, start: '_$BLANK_RULE$_', end: '_$BLANK_RULE$_' };
@@ -43,6 +43,7 @@ export const FN_CLONE_TOKEN = (t: iToken) => {
     clone.enumerationMap = Object.assign({}, t.enumerationMap);
     return clone;
 }
+
 export const FN_GET_PROPS_ARRAY = (propsToken: iToken) => {
     const temp: Array<string> = propsToken.value.split(' '); // [[ #PROPS msg1,msg2, data ]]
     temp.shift();
@@ -51,13 +52,7 @@ export const FN_GET_PROPS_ARRAY = (propsToken: iToken) => {
     const props: Array<string> = temp.join('').split(',').map((s: string) => s.trim()); // [ msg1,msg2 ]
     return props;
 }
-// export const FN_SORT_BY_REF_QTY = (a: iComponentReference, b: iComponentReference, ) => {
-//     if ( a.referenceQuantity < b.referenceQuantity ) {
-//       return -1;
-//     } else if ( a.referenceQuantity > b.referenceQuantity ) {
-//       return 1;
-//     } else return 0;
-// }
+
 export const _DEV_SYMBOLTABLE: iSymbolTable = {
     document: {
         doctype: 'html',

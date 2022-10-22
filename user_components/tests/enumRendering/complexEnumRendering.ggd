@@ -1,0 +1,15 @@
+[[ #PROPS enum1, enum2 ]]
+[[ #FOR el IN enum1 ]]
+    <h2>list {{el.listName }}:</h2>
+    <ul>
+        [[ #FOR entry IN el.items ]]
+        <li>{{ entry }}</li>
+        [[ #ENDFOR ]]
+    </ul>
+    <h3>options:</h3>
+    <ul>
+    [[ #FOR option IN enum2 ]]
+        <li>{{ option }}</li>
+    [[ #ENDFOR ]]
+    </ul>
+[[ #ENDFOR ]]

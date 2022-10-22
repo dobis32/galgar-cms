@@ -11,14 +11,15 @@ export default class TokenParser {
     private initProps: Array<string>;
     private symbolTable: SymbolTable;
     private outputTokens: Array<iToken>;
-    // private componentMap: iComponentMap;
+    private componentMap: iComponentMap;
     private componentAliasStack: Array<iComponentMap>;
-    constructor (tokens: Array<iToken>, st: SymbolTable, initProps: Array<string>, cas?: Array<iComponentMap>) {
+
+    constructor (tokens: Array<iToken>, st: SymbolTable, initProps: Array<string>, initComponentMap: iComponentMap, cas?: Array<iComponentMap>) {
         this.input = tokens;
         this.outputTokens = [ ];
         this.initProps = initProps;
-        this.symbolTable = st; 
-        // this.componentMap = cm;
+        this.symbolTable = st;
+        this.componentMap = initComponentMap;
         this.componentAliasStack = cas ? cas : [ ];
     }
 
@@ -30,15 +31,16 @@ export default class TokenParser {
     //     return this.componentMap;
     // }
 
-    parse(initProps?: Array<string>): Array<iToken> {
-        const props: Array<string> = initProps ? initProps : [];
-        const isValid: boolean = this.validate(this.input);
+    parse(): Array<iToken> {
+        const props: Array<string> = this.initProps;
+        const isValid: boolean = this.validate();
         if (isValid == false) throw new Error('[ PARSER ERROR ] parse(): Input not valid; be sure to run validate()');
         const outputTokens = this.initParse(this.input, props);
-        return outputTokens;
+        this.outputTokens = outputTokens;
+        return this.outputTokens;
     }
 
-    getAliasComponentMap(index?: number): iComponentMap {
+    private getAliasComponentMap(index?: number): iComponentMap {
         const stack: Array<iComponentMap> = this.componentAliasStack;
         let ret: iComponentMap;
         if (stack.length == 0) throw new Error('[ PARSER ERROR ] getAliasComponentMap(): No alias component map in the stack to get')
@@ -47,7 +49,7 @@ export default class TokenParser {
         return ret;
     }
 
-    initParse(tokens: Array<iToken>, propsArray: Array<string>): Array<iToken> {
+    private initParse(tokens: Array<iToken>, propsArray: Array<string>): Array<iToken> {
         try {
             let clonedTokens: Array<iToken> = [ ];
             tokens.forEach((t: iToken) => {
@@ -149,9 +151,9 @@ export default class TokenParser {
     private parseComponentControl(controlToken: iToken): void {
         const compMap: iComponentMap = this.getAliasComponentMap();
         const temp: Array<string> = controlToken.value.split(' '); // [[ #IMPORT Component AS Alias ]]
-        const identifier: string = temp[2].split('/').pop() as string;
+        const identifier: string = temp[2].split('\\').pop() as string;
         const alias: string = temp[4] ? temp[4] : identifier;
-        const component: iComponentReference = compMap[identifier];
+        const component: iComponentReference = this.componentMap[identifier];
         if (component == undefined) throw new Error('[ PARSER ERROR ] parseComponentControl(): Failed to find component reference with identifier ' + identifier);
         this.setComponentAlias(component, alias)
     }
@@ -347,7 +349,8 @@ export default class TokenParser {
         return ret;
     }
 
-    validate(tokens: Array<iToken>): boolean {
+    validate(): boolean {
+        const tokens: Array<iToken> = this.input;
         const tokensAreProperlyClosed: boolean = this.tokensProperlyEnclosed(tokens);
         let validInput: boolean = false;
         if (tokensAreProperlyClosed) validInput = true;

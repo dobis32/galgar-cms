@@ -1,0 +1,8 @@
+{
+    "stData": {
+        "enum1": [ { "listName": "the first list", "items": [ "item1-1", "item1-2", "item1-3" ] },
+        { "listName": "the second list", "items": [ "item2-1", "item2-2" ] } ],
+        "enum2": [ "option1", "option2", "option3", "option4" ]
+    },
+    "identifier": "tests\\enumRendering\\complexEnumRendering"
+}

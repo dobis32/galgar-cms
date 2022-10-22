@@ -1,0 +1,22 @@
+[[ #COMPONENT sidebar ]]
+[[ #COMPONENT mainContent ]]
+[[ #PROPS sidebarOptions, userPosts ]]
+<div id="sidebar-wrapper">
+    <sidebar options={{ sidebarOptions }} />
+</div>
+<div id="contents-wrapper" >
+    <mainContent posts={{ userPosts }} />
+</div>
+<style>
+    * {
+        padding: 0px;
+        margin: 0px;
+        vertical-align: top;
+    }
+    #sidebar-wrapper {
+        display: inline-block;
+    }
+    #contents-wrapper {
+        display: inline-block;
+    }
+</style>

@@ -1,0 +1,15 @@
+[[ #PROPS foobar, condition1, condition2, condition3 ]]
+<h1>
+{{ foobar }}
+</h1>
+[[ #IF condition1 ]]
+condition1 was true
+[[ #ELSE ]]
+condition1 was false
+[[ #ENDIF ]]
+
+[[ #IF condition2 & condition3  ]]
+condition2 and condition3 were true
+[[ #ELSEIF condition2 ]]
+condition2 was true, condition3 was false
+[[ #ENDIF ]]

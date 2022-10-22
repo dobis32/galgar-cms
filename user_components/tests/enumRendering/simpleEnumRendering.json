@@ -1,0 +1,7 @@
+{
+    "stData": {
+        "enum1": [ "enum element 1", "enum element 2", "enum element 3" ],
+        "someValue": "this is some non-enum value"
+    },
+    "identifier": "tests\\enumRendering\\simpleEnumRendering"
+}

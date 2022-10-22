@@ -21,7 +21,6 @@ export const ValueInjector = {
             const errMsg = `[ INJECTOR ERROR ] no symbol or context found for alias: ${symbol}`;
             throw new Error(errMsg);
         }
-        ;
         let evaluatedSymbol = resolved;
         while (typeof evaluatedSymbol === 'function') {
             evaluatedSymbol = evaluatedSymbol();

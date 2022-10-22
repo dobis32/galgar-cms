@@ -1,0 +1,7 @@
+[[ #PROPS enum1, someValue ]]
+[[ #FOR value IN enum1 ]]
+<div>
+    <h2>{{ value }}</h2>
+    <h3>{{ someValue }}</h3>
+</div>
+[[ #ENDFOR ]]

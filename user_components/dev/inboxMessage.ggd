@@ -1,0 +1,22 @@
+[[ #PROPS data ]]
+<div class="message-wrapper">
+    <h3>From: {{ data.from }}</h3>
+    <h3>To: 
+        [[ #FOR t IN data.to ]]
+            {{ t }},
+        [[ #ENDFOR ]]
+    </h3>
+    [[ #IF data.read ]]
+        <h5>(read)</h5>
+    [[ #ELSE ]]
+        <h5>(unread)</h5>
+    [[ #ENDIF ]]
+    <p>{{ data.content }}</p>
+</div>
+<style>
+    .message-wrapper {
+        width: 500px;
+        margin: 0 auto;
+        padding: 30px 0px;
+    }
+</style>

@@ -1,0 +1,6 @@
+[[ #PROPS postName, postBody, postAuthor ]]
+<div>
+    <h2>{{ postName }}</h2>
+    <h5>{{ postAuthor }}</h5>
+    <h3>{{ postBody }}</h3>
+</div>

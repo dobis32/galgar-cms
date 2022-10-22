@@ -2,7 +2,7 @@ import { _TYPE_CONTROL_GENERIC_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROL_PROPS_TOKEN,
 import { _TYPE_BLANK_TOKEN } from './tokenTypes';
 const localdir = process.cwd();
 export const COMPONENT_FILE_PATH = localdir + '\\user_components\\';
-export const RENDERED_FILE_PATH = localdir + '\\rendered\\';
+export const RENDERED_FILE_PATH = localdir + '\\public\\rendered\\';
 export const SELF_CLOSING_TAG_TYPES = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
 export const CLOSING_EXEMPT_TAGS = ['meta'];
 export const BLANK_RULE = { type: _TYPE_BLANK_TOKEN, start: '_$BLANK_RULE$_', end: '_$BLANK_RULE$_' };
@@ -45,13 +45,6 @@ export const FN_GET_PROPS_ARRAY = (propsToken) => {
     const props = temp.join('').split(',').map((s) => s.trim()); // [ msg1,msg2 ]
     return props;
 };
-// export const FN_SORT_BY_REF_QTY = (a: iComponentReference, b: iComponentReference, ) => {
-//     if ( a.referenceQuantity < b.referenceQuantity ) {
-//       return -1;
-//     } else if ( a.referenceQuantity > b.referenceQuantity ) {
-//       return 1;
-//     } else return 0;
-// }
 export const _DEV_SYMBOLTABLE = {
     document: {
         doctype: 'html',
