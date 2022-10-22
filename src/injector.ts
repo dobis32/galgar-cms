@@ -20,7 +20,7 @@ export const ValueInjector = {
         const symbol: string = this.getSymbolNameFromInjection(token.raw, controlPosition);
         const resolved: any = symbolTable.resolveSymbol(symbol, token.enumerationMap);
         if (resolved === undefined) {
-            const errMsg: string = `[ INJECTOR ERROR ] no symbol or context found for alias: ${symbol}`;
+            const errMsg: string = `[ INJECTOR ERROR ] no symbol or context found for alias: ${symbol} | length: ${symbol.length}`;
             throw new Error(errMsg);
         }
         let evaluatedSymbol: any = resolved;

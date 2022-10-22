@@ -9,11 +9,9 @@ import { TEST_PACKAGE_NESTED_IF, TEST_PACKAGE_DYNAMIC_HEADER, TESTING_COMPONENT_
 describe('tokenParser.ts', () => {
     let componentMapStack : Array<iComponentMap>;
     let parser: TokenParser;
-    let compMap: iComponentMap;
     let st: SymbolTable;
     let tokens: Array<iToken>;
     beforeEach(() => {
-        compMap = {};
         componentMapStack = [ TESTING_COMPONENT_REF_MAP ];
         const contextStack: Array<iSymbolContext> = TEST_PACKAGE_DYNAMIC_HEADER.symbolTableStack;
         const initProps: Array<string> = TEST_PACKAGE_DYNAMIC_HEADER.component.props;
@@ -25,7 +23,7 @@ describe('tokenParser.ts', () => {
         const testTokens: Array<iToken> = TEST_PACKAGE_DYNAMIC_HEADER.component.tokens;
         const testProps: Array<string> = TEST_PACKAGE_DYNAMIC_HEADER.component.props;
         parser.validate = jest.fn(parser.validate);
-        parser = new TokenParser(tokens, st, testProps, componentMapStack);
+        parser = new TokenParser(tokens, st, testProps, TESTING_COMPONENT_REF_MAP);
         const parsedTokens: Array<iToken> = parser.parse();
         expect(parser.parse).toBeDefined();
         expect(typeof parser.parse).toEqual('function');
@@ -43,7 +41,7 @@ describe('tokenParser.ts', () => {
             name: 'table',
             enumerationMap: {}
         } ]; // incomplete/invalid token set
-        parser = new TokenParser(invalidTokens, st, [], componentMapStack);
+        parser = new TokenParser(invalidTokens, st, [], TESTING_COMPONENT_REF_MAP);
         expect(() => { parser.parse(); }).toThrow();
     });
 
@@ -52,7 +50,7 @@ describe('tokenParser.ts', () => {
         const tokens: Array<iToken> = testPack.component.tokens;
         const props: Array<string> = testPack.component.props;
         const st: SymbolTable = new SymbolTable(testPack.symbolTableStack);
-        const parser: TokenParser = new TokenParser(tokens, st, props);
+        const parser: TokenParser = new TokenParser(tokens, st, props, TESTING_COMPONENT_REF_MAP);
         const result: Array<iToken> = parser.parse();
         expect(result).toEqual(testPack.expectedResult);
     });

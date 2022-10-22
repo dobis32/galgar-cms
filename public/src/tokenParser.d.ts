@@ -9,6 +9,7 @@ export default class TokenParser {
     private componentAliasStack;
     constructor(tokens: Array<iToken>, st: SymbolTable, initProps: Array<string>, initComponentMap: iComponentMap, cas?: Array<iComponentMap>);
     getSymbolTable(): SymbolTable;
+    getTokens(): Array<iToken>;
     parse(): Array<iToken>;
     private getAliasComponentMap;
     private initParse;

@@ -27,6 +27,10 @@ export default class TokenParser {
         return this.symbolTable;
     }
 
+    getTokens(): Array<iToken> {
+        return this.input;
+    }
+
     // getComponentMap(): iComponentMap {
     //     return this.componentMap;
     // }
