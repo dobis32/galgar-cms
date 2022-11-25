@@ -24,7 +24,7 @@ export class AlgebraSolver {
         let ret: boolean = false;
         const inputIsValid: boolean = this.validate(input);
         try {
-            if (!inputIsValid) throw new Error('[ ALGEBRA SOLVER ] Input must be valid before it can be evaluated');
+            if (!inputIsValid) throw new Error('[ ALGEBRA SOLVER ERROR ] evaluate(): Input must be valid before it can be evaluated');
             const exp: string = input;
             ret = this.solve(exp);
         } catch(error) {
@@ -73,7 +73,7 @@ export class AlgebraSolver {
 
     solveSimpleExpression(expression: string): boolean {
         let result: boolean = false;
-        if (expression.indexOf(ALGEBRAIC_AND) >= 0 || expression.indexOf(ALGEBRAIC_OR) >= 0) throw new Error('[ ALGEBRA SOLVER ] solveSimpleExpression(): found a logical operator in a simple exprssion');
+        if (expression.indexOf(ALGEBRAIC_AND) >= 0 || expression.indexOf(ALGEBRAIC_OR) >= 0) throw new Error('[ ALGEBRA SOLVER ERROR ] solveSimpleExpression(): found a logical operator in a simple exprssion');
         const expressionTokens: Array<string> = expression.split(' ').filter((s: string) => s.length > 0);
         let negate: boolean = false;
         while (expressionTokens[0] == ALGEBRAIC_NOT) {
@@ -109,13 +109,13 @@ export class AlgebraSolver {
                 const c: string = input[i];
                 if (c == '(') pStack.push(c);
                 else if (c == ')') {
-                    if (pStack.length == 0) throw new Error('[ ALGEBRA SOLVER ] Unexpected closing parentheses found during validation; check expression');
+                    if (pStack.length == 0) throw new Error('Unexpected closing parentheses found during validation; check expression');
                     else pStack.pop();
                 }
             }
             if (pStack.length == 0) inputIsValid = true;
         } catch (error) {
-            console.log(error);
+            console.log('[ ALGEBRA SOLVER ERROR ] validate():' + error);
             inputIsValid = false;
         } finally {
             return inputIsValid;

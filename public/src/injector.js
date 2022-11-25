@@ -10,24 +10,29 @@ export const ValueInjector = {
         return ret;
     },
     injectSymbol(token, symbolTable, controlPosition) {
-        const ret = token;
-        if (controlPosition == undefined)
-            controlPosition = this.getInjectPositioning(token.raw);
-        if (controlPosition == INVALID_POSITION)
-            throw new Error(`[ INJECTOR ERROR ] invalid injection position found for token: ${token.value}`);
-        const symbol = this.getSymbolNameFromInjection(token.raw, controlPosition);
-        const resolved = symbolTable.resolveSymbol(symbol, token.enumerationMap);
-        if (resolved === undefined) {
-            const errMsg = `[ INJECTOR ERROR ] no symbol or context found for alias: ${symbol} | length: ${symbol.length}`;
-            throw new Error(errMsg);
+        try {
+            const ret = token;
+            if (controlPosition == undefined)
+                controlPosition = this.getInjectPositioning(token.raw);
+            if (controlPosition == INVALID_POSITION)
+                throw new Error(`[ INJECTOR ERROR ] invalid injection position found for token: ${token.value}`);
+            const symbol = this.getSymbolNameFromInjection(token.raw, controlPosition);
+            const resolved = symbolTable.resolveSymbol(symbol, token.enumerationMap);
+            if (resolved === undefined) {
+                const errMsg = `[ INJECTOR ERROR ] no symbol or context found for alias: ${symbol} | length: ${symbol.length}`;
+                throw new Error(errMsg);
+            }
+            let evaluatedSymbol = resolved;
+            while (typeof evaluatedSymbol === 'function') {
+                evaluatedSymbol = evaluatedSymbol();
+            }
+            ret.raw = token.raw.substring(0, controlPosition.start) + resolved + token.raw.substring(controlPosition.end + INJECT_RULE.end.length);
+            ret.value = ret.raw.split('\t').filter((t) => t.length > 0).join('').trim();
+            return ret;
         }
-        let evaluatedSymbol = resolved;
-        while (typeof evaluatedSymbol === 'function') {
-            evaluatedSymbol = evaluatedSymbol();
+        catch (error) {
+            throw new Error('[ INJECTOR ERROR ] injectSymbol():');
         }
-        ret.raw = token.raw.substring(0, controlPosition.start) + resolved + token.raw.substring(controlPosition.end + INJECT_RULE.end.length);
-        ret.value = ret.raw.split('\t').filter((t) => t.length > 0).join('').trim();
-        return ret;
     },
     getPropMapForComponentRef(componentToken, expectedProps, st) {
         // VALID:
@@ -46,34 +51,39 @@ export const ValueInjector = {
             4. Map to prop map
         */
         const propMap = {};
-        if (expectedProps.length == 0)
-            return propMap;
-        else {
-            let referenceString = componentToken.value;
-            let nextAssignmentIndex = referenceString.indexOf('=');
-            while (nextAssignmentIndex >= 0) {
-                if (nextAssignmentIndex == -1 && expectedProps.length > 0)
-                    throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): expected to find a prop but no assignment was found:\n' + componentToken.value);
-                let nextSpaceIndex = referenceString.indexOf(' ');
-                if (nextSpaceIndex == -1 || nextSpaceIndex > nextAssignmentIndex)
-                    throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): invalid assignment syntax:\n' + componentToken.value);
-                let propNameFound = referenceString.substring(nextSpaceIndex + 1, nextAssignmentIndex);
-                if (expectedProps.indexOf(propNameFound) == -1)
-                    throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): unrecognized prop name found:\n' + propNameFound + '\n expected: ' + expectedProps);
-                let injectPosition = this.getInjectPositioning(referenceString);
-                let symbolName = this.getSymbolNameFromInjection(referenceString, injectPosition);
-                let resolvedValue = st.resolveSymbol(symbolName);
-                propMap[propNameFound] = resolvedValue;
-                referenceString = referenceString.substring(injectPosition.end + INJECT_RULE.end.length);
-                nextAssignmentIndex = referenceString.indexOf('=');
+        try {
+            if (expectedProps.length == 0)
+                return propMap;
+            else {
+                let referenceString = componentToken.value;
+                let nextAssignmentIndex = referenceString.indexOf('=');
+                while (nextAssignmentIndex >= 0) {
+                    if (nextAssignmentIndex == -1 && expectedProps.length > 0)
+                        throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): expected to find a prop but no assignment was found:\n' + componentToken.value);
+                    let nextSpaceIndex = referenceString.indexOf(' ');
+                    if (nextSpaceIndex == -1 || nextSpaceIndex > nextAssignmentIndex)
+                        throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): invalid assignment syntax:\n' + componentToken.value);
+                    let propNameFound = referenceString.substring(nextSpaceIndex + 1, nextAssignmentIndex);
+                    if (expectedProps.indexOf(propNameFound) == -1)
+                        throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): unrecognized prop name found:\n' + propNameFound + '\n expected: ' + expectedProps);
+                    let injectPosition = this.getInjectPositioning(referenceString);
+                    let symbolName = this.getSymbolNameFromInjection(referenceString, injectPosition);
+                    let resolvedValue = st.resolveSymbol(symbolName, componentToken.enumerationMap);
+                    propMap[propNameFound] = resolvedValue;
+                    referenceString = referenceString.substring(injectPosition.end + INJECT_RULE.end.length);
+                    nextAssignmentIndex = referenceString.indexOf('=');
+                }
+                Object.keys(propMap).forEach((propName) => {
+                    if (expectedProps.indexOf(propName) == -1)
+                        throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): unexpected prop assignment on token:\n' + componentToken.value);
+                });
+                if (Object.keys(propMap).length != expectedProps.length)
+                    throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): could not find all required props on reference:\n' + componentToken.value);
+                return propMap;
             }
-            Object.keys(propMap).forEach((propName) => {
-                if (expectedProps.indexOf(propName) == -1)
-                    throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): unexpected prop assignment on token:\n' + componentToken.value);
-            });
-            if (Object.keys(propMap).length != expectedProps.length)
-                throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): could not find all required props on reference:\n' + componentToken.value);
-            return propMap;
+        }
+        catch (error) {
+            throw new Error('[ INJECTOR ERROR ] getPropMapForComponentRef(): ' + error);
         }
     },
     getSymbolNameFromInjection(injectionString, controlPosition) {

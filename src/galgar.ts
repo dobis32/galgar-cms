@@ -26,8 +26,6 @@ export class Galgar {
         const symbolContextStack: Array<iSymbolContext> = [ { aliases: {}, props: stData } ];
         const resourcePathTokens: Array<string> = rawPath.split('\\');
         const identifier: string = resourcePathTokens.pop() as string;
-        // const localPath: string = resourcePathTokens.filter((s: string) => s != '.').join('/');
-        // const partialToken: iComponentReference = { name: identifier, raw: '', tokens: [], props:[] };  
         const baseFilePath: string = resourcePathTokens.join('\\') + '\\';    
         this.entryPath = baseFilePath;
         this.referenceQueue.push(identifier);
@@ -51,23 +49,21 @@ export class Galgar {
         try {
             const extraPath: string = partialPath ? partialPath : '';
             const path: string = (COMPONENT_FILE_PATH + extraPath + identifier + FILE_EXTENSION_GGD);
-            console.log('COMP FILE PATH: ' + COMPONENT_FILE_PATH);
-            console.log('PARTIAL PATH: ' + partialPath);
-            console.log('IDENTIFIER: ' + identifier);
-            console.log('Reading file at path: ' + path);
-            console.log('\n\n');
-            const fileContents: string = readFileSync(path, {encoding:'utf8', flag:'rs'})
+            /* console.log('[ GALGAR ] loadFileInput(): COMP FILE PATH: ' + COMPONENT_FILE_PATH);
+            console.log('[ GALGAR ] loadFileInput(): PARTIAL PATH: ' + partialPath);
+            console.log('[ GALGAR ] loadFileInput(): IDENTIFIER: ' + identifier);
+            console.log('[ GALGAR ] loadFileInput(): Reading file at path: ' + path); */
+            const fileContents: string = readFileSync(path, {encoding:'utf8', flag:'rs'});
             input = `${ fileContents }`;
         } catch(error) {
-            console.log('[ GALGAR ]' + error);
-            throw new Error('[ GALGAR ] something went waaaaayyyyy wrong')
+            throw new Error('[ GALGAR ERROR ] loadFileInput(): ' + error);
         }
         return input;
     }
 
     private async saveFileOutput(identifier: string, contents: string): Promise<any> {
         const path: string = RENDERED_FILE_PATH + identifier + FILE_EXTENSION_HTML;
-        console.log('WRITING PARSED OUTPUT TO FILE: ' + path);
+        console.log('[ GALGAR ] saveFileOutput(): WRITING PARSED OUTPUT TO FILE: ' + path);
         fs.writeFile(path, contents, () => {});
     }
 
@@ -89,7 +85,7 @@ export class Galgar {
                 }
             }
         } catch(error) {
-            console.log(error);
+            throw new Error('[ GALGAR ERROR ] lexTokens(): ' + error);
         } finally {
             return tokens;
         }
@@ -107,21 +103,11 @@ export class Galgar {
                 const compRef: iComponentReference = { name: identifier, raw: fileContents, tokens: [], props: [] };
                 compRef.tokens = await this.lexTokens(compRef.raw);
                 compRef.props = this.getProps(compRef.tokens);
-                console.log('made a comp ref: ');
-                console.log(compRef);
-                console.log(identifier)
+                console.log('[ GALGAR ] lexComponentReferences(): made a comp ref, comp name: ' + compRef.name + ' || identifier: ' + identifier);
                 this.initComponentMap[identifier] = compRef;
             }
         }
     }
-
-    // private isComponentSlotted(tokens: Array<iToken>) {
-    //     const slotTokenIndex: number = tokens.map((t: iToken) => t.type).indexOf(_TYPE_CONTROL_SLOT_TOKEN);
-    //     let slotted: boolean = undefined;
-    //     if (slotTokenIndex >= 0) slotted = true;
-    //     else slotted = false;
-    //     return slotted;
-    // }
 
     private parseTokens(input: Array<iToken>, stData: Array<iSymbolContext>, initProps: Array<string>): string {
         let ret: string = '';
@@ -129,7 +115,7 @@ export class Galgar {
         const compMap: iComponentMap = this.initComponentMap;
         const parser: TokenParser = new TokenParser(input, st, initProps, compMap);
         const isValid: boolean = parser.validate();
-        if (!isValid) throw new Error('[GALGAR ERROR ] Input not valid. Parsing failed.');
+        if (!isValid) throw new Error('[ GALGAR ERROR ] parseTokens(): Input not valid. Parsing failed.');
         parser.parse();
         ret = parser.getOutputAsText();
         return ret;
@@ -137,7 +123,7 @@ export class Galgar {
 
     private getProps(tokens: Array<iToken>): Array<string> {
         const propsTokenIndex: number = tokens.map((t: iToken) => t.type).indexOf(_TYPE_CONTROL_PROPS_TOKEN);
-        if (propsTokenIndex < 0) throw new Error('[ GALGAR ERROR ] No props token exists in this component reference');
+        if (propsTokenIndex < 0) throw new Error('[ GALGAR ERROR ] getProps(): No props token exists in this component reference');
         const propsToken: iToken = tokens[propsTokenIndex];
         const props: Array<string> = FN_GET_PROPS_ARRAY(propsToken);
         return props;

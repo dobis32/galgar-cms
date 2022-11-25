@@ -19,7 +19,7 @@ export class AlgebraSolver {
         const inputIsValid = this.validate(input);
         try {
             if (!inputIsValid)
-                throw new Error('[ ALGEBRA SOLVER ] Input must be valid before it can be evaluated');
+                throw new Error('[ ALGEBRA SOLVER ERROR ] evaluate(): Input must be valid before it can be evaluated');
             const exp = input;
             ret = this.solve(exp);
         }
@@ -75,7 +75,7 @@ export class AlgebraSolver {
     solveSimpleExpression(expression) {
         let result = false;
         if (expression.indexOf(ALGEBRAIC_AND) >= 0 || expression.indexOf(ALGEBRAIC_OR) >= 0)
-            throw new Error('[ ALGEBRA SOLVER ] solveSimpleExpression(): found a logical operator in a simple exprssion');
+            throw new Error('[ ALGEBRA SOLVER ERROR ] solveSimpleExpression(): found a logical operator in a simple exprssion');
         const expressionTokens = expression.split(' ').filter((s) => s.length > 0);
         let negate = false;
         while (expressionTokens[0] == ALGEBRAIC_NOT) {
@@ -117,7 +117,7 @@ export class AlgebraSolver {
                     pStack.push(c);
                 else if (c == ')') {
                     if (pStack.length == 0)
-                        throw new Error('[ ALGEBRA SOLVER ] Unexpected closing parentheses found during validation; check expression');
+                        throw new Error('Unexpected closing parentheses found during validation; check expression');
                     else
                         pStack.pop();
                 }
@@ -126,7 +126,7 @@ export class AlgebraSolver {
                 inputIsValid = true;
         }
         catch (error) {
-            console.log(error);
+            console.log('[ ALGEBRA SOLVER ERROR ] validate():' + error);
             inputIsValid = false;
         }
         finally {

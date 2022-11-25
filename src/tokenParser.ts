@@ -77,7 +77,7 @@ export default class TokenParser {
             const prop = props[i];
             const value = this.symbolTable.resolveSymbol(prop);
             if (value == undefined) {
-                props.forEach((p: string) => console.log('[ PARSER ERROR ] buildPropsMap(): missing prop: ' + p))
+                // props.forEach((p: string) => console.log('[ PARSER ERROR ] buildPropsMap(): missing prop: ' + p))
                 const errMsg: string = `[ PARSER ERROR ] buildPropsMap(): Failed to build init prop map, missing value for prop ${ prop }`;
                 throw new Error(errMsg);
             }
@@ -87,40 +87,44 @@ export default class TokenParser {
     }
 
     private parseTokens(input: Array<iToken>, context: iSymbolContext): Array<iToken> {
-        const output: Array<iToken> = [ ];
-        this.symbolTable.pushContext(context);
-        while (input.length > 0) {
-            const tok: iToken = input.shift() as iToken;
-            switch (tok.type) {
-                case _TYPE_CONTROL_PROPS_TOKEN:
-                    this.processPropsToken(tok);
-                    break;
-                case _TYPE_CONTROL_IF_TOKEN:
-                    input = this.parseIfControl(tok, input);
-                    break;
-                case _TYPE_CONTROL_FOR_TOKEN:
-                    input = this.parseForControl(tok, input);
-                    break;
-                case _TYPE_CONTROL_COMPONENT_TOKEN:
-                    this.parseComponentControl(tok); // this won't add any new components if the alias already exists
-                    break;
-                default:
-                    const isValidRef: boolean = this.tokenIsAValidComponentReference(tok);
-                    if (tok.type == _TYPE_CONTROL_COMPONENT_TOKEN && !isValidRef) {
-                        const errMsg: string = '[ PARSER ERROR ] parseTokens(): Could not find component reference' + tok.name;
-                        throw new Error(errMsg);
-                    }
-                    if (TokenIdentifier.isSelfClosingTag(tok) && isValidRef) {
-                        input = this.processComponentReference(tok, input);
-                    } else {
-                        const processed: iToken = ValueInjector.injectTokenSymbols(tok, this.symbolTable);
-                        output.push(processed);
-                    }
-                    break;
+        try {
+            const output: Array<iToken> = [ ];
+            this.symbolTable.pushContext(context);
+            while (input.length > 0) {
+                const tok: iToken = input.shift() as iToken;
+                switch (tok.type) {
+                    case _TYPE_CONTROL_PROPS_TOKEN:
+                        this.processPropsToken(tok);
+                        break;
+                    case _TYPE_CONTROL_IF_TOKEN:
+                        input = this.parseIfControl(tok, input);
+                        break;
+                    case _TYPE_CONTROL_FOR_TOKEN:
+                        input = this.parseForControl(tok, input);
+                        break;
+                    case _TYPE_CONTROL_COMPONENT_TOKEN:
+                        this.parseComponentControl(tok); // this won't add any new components if the alias already exists
+                        break;
+                    default:
+                        const isValidRef: boolean = this.tokenIsAValidComponentReference(tok);
+                        if (tok.type == _TYPE_CONTROL_COMPONENT_TOKEN && !isValidRef) {
+                            const errMsg: string = '[ PARSER ERROR ] parseTokens(): Could not find component reference' + tok.name;
+                            throw new Error(errMsg);
+                        }
+                        if (TokenIdentifier.isSelfClosingTag(tok) && isValidRef) {
+                            input = this.processComponentReference(tok, input);
+                        } else {
+                            const processed: iToken = ValueInjector.injectTokenSymbols(tok, this.symbolTable);
+                            output.push(processed);
+                        }
+                        break;
+                }
             }
+            this.symbolTable.popContext();
+            return output;
+        } catch(error) {
+            throw new Error('[ PARSER ERROR ] parseTokens(): ' + error);
         }
-        this.symbolTable.popContext();
-        return output;
     }
 
     private tokenIsAValidComponentReference(token: iToken): boolean {
@@ -135,21 +139,25 @@ export default class TokenParser {
     }
 
     private processComponentReference(componentToken: iToken, tokens: Array<iToken>): Array<iToken> {
-        const aliasMap: iComponentMap = this.getAliasComponentMap();
-        const componentRef: iComponentReference = aliasMap[componentToken.name];
-        const props: Array<string> = componentRef.props;
-        const propMap: iSymbolTable = ValueInjector.getPropMapForComponentRef(componentToken, props, this.symbolTable);
-        const compTokens: Array<iToken> = [];
-        componentRef.tokens.forEach((t: iToken) => { // if you don't clone the input array, the comp reference tokens won't be parseable again
-            const clone = FN_CLONE_TOKEN(t);
-            compTokens.push(clone);
-        });
-        this.componentAliasStack.push({});
-        const context: iSymbolContext = { aliases: {}, props: propMap };
-        const processedComponentTokens: Array<iToken> = this.parseTokens(compTokens, context);
-        this.componentAliasStack.pop();
-        const result: Array<iToken> = this.tokensToFrontOfQueue(tokens, processedComponentTokens);
-        return result;
+        try {
+            const aliasMap: iComponentMap = this.getAliasComponentMap();
+            const componentRef: iComponentReference = aliasMap[componentToken.name];
+            const props: Array<string> = componentRef.props;
+            const propMap: iSymbolTable = ValueInjector.getPropMapForComponentRef(componentToken, props, this.symbolTable);
+            const compTokens: Array<iToken> = [];
+            componentRef.tokens.forEach((t: iToken) => { // if you don't clone the input array, the comp reference tokens won't be parseable again
+                const clone = FN_CLONE_TOKEN(t);
+                compTokens.push(clone);
+            });
+            this.componentAliasStack.push({});
+            const context: iSymbolContext = { aliases: {}, props: propMap };
+            const processedComponentTokens: Array<iToken> = this.parseTokens(compTokens, context);
+            this.componentAliasStack.pop();
+            const result: Array<iToken> = this.tokensToFrontOfQueue(tokens, processedComponentTokens);
+            return result;
+        } catch(error) {
+            throw new Error('[ PARSER ERROR ] processComponentReference(): ' + error);
+        }
     }
 
     private parseComponentControl(controlToken: iToken): void {
@@ -234,24 +242,28 @@ export default class TokenParser {
     }
 
     private inflateForControl(tokens: Array<iToken>, enumerableContext: Array<any>, contextualAlias: string): Array<iToken> {
-        const ret: Array<iToken> = [];
-        for (let j = 0; j < enumerableContext.length; j++) { // loop over contexts
-            const tokensToParse: Array<iToken> = [];
-            this.symbolTable.addContextualSymbol(enumerableContext, contextualAlias); // add context
-            tokens.forEach((t: iToken) => { // loop over target tokens'
-                const clone = FN_CLONE_TOKEN(t);
-                if (clone.enumerationMap[contextualAlias] != undefined) {
-                    const errMsg: string = `[ PARSER ERROR ] inflateForControl(): duplicate context found in the same source file. Offending context: ${ contextualAlias }`;
-                    throw new Error(errMsg);
-                }
-                clone.enumerationMap[contextualAlias] = j;
-                tokensToParse.push(clone);
-            });
-            const context: iSymbolContext = this.symbolTable.getContext();
-            const parsedTokens = this.parseTokens(tokensToParse, context);
-            while(parsedTokens.length) ret.push(parsedTokens.shift() as iToken);
+        try {
+            const ret: Array<iToken> = [];
+            for (let j = 0; j < enumerableContext.length; j++) { // loop over contexts
+                const tokensToParse: Array<iToken> = [];
+                this.symbolTable.addContextualSymbol(enumerableContext, contextualAlias); // add context
+                tokens.forEach((t: iToken) => { // loop over target tokens'
+                    const clone = FN_CLONE_TOKEN(t);
+                    if (clone.enumerationMap[contextualAlias] != undefined) {
+                        const errMsg: string = `[ PARSER ERROR ] inflateForControl(): duplicate context found in the same source file. Offending context: ${ contextualAlias }`;
+                        throw new Error(errMsg);
+                    }
+                    clone.enumerationMap[contextualAlias] = j;
+                    tokensToParse.push(clone);
+                });
+                const context: iSymbolContext = this.symbolTable.getContext();
+                const parsedTokens = this.parseTokens(tokensToParse, context);
+                while(parsedTokens.length) ret.push(parsedTokens.shift() as iToken);
+            }
+            return ret;
+        } catch(error) {
+            throw new Error('[ PARSER ERROR ] inflateForControl(): ' + error);
         }
-        return ret;
     }
 
     getOutputAsText(): string {

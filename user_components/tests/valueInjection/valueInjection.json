@@ -6,5 +6,5 @@
         "myContent1": "this is just some content",
         "myContent2": "this is some other content"
     },
-    "identifier": "tests\\valueInjector\\valueInjector"
+    "identifier": "tests\\valueInjection\\valueInjection"
 }
