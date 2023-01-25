@@ -9,6 +9,7 @@ export default class Lexer {
     setInput(input: string): void;
     getInput(): string;
     lex(): iToken;
+    generatePropsMap(token: iToken): Array<string>;
     getNextLexPosition(input: string, rules: Array<iRule>, offset?: number): {
         position: iLexPosition;
         matchedRule: iRule;

@@ -1,0 +1,14 @@
+[[ #PROPS ]]
+[[ #COMPONENT .\components\hero AS heroComponent ]]
+[[ #COMPONENT .\components\secondary AS secondaryComoponent ]]
+[[ #COMPONENT .\components\footer AS footerComponent ]]
+
+<table align="center" role="presentation" width="600">
+    <tr>
+        <td>
+            <heroComponent>
+            <secondaryComoponent>
+            <footerComponent>
+        </td>
+    </tr>
+</table>

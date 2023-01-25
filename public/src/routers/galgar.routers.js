@@ -3,7 +3,8 @@ import { Galgar } from '../galgar';
 import { HTML_RULE, CONTROL_RULE } from '../const/const';
 import Grammar from '../grammar';
 const grammar = new Grammar([HTML_RULE, CONTROL_RULE]);
-const galgar = new Galgar(grammar);
+const _COMPONENTS_DIRECTORY = 'D:\\galgar-cms\\user_components';
+const galgar = new Galgar(grammar, _COMPONENTS_DIRECTORY);
 const router = Router();
 router.get('/parse', async (req, res) => {
     // body of requests expects input field to exist 
@@ -11,7 +12,7 @@ router.get('/parse', async (req, res) => {
     const payload = {
         message: ''
     };
-    galgar.parseProgram(identifier, stData)
+    galgar.parse(identifier, stData)
         .then((output) => {
         console.log('[ GALGAR ROUTER ] program prased successfuly');
         payload.message = 'Program parsed successfully';

@@ -1,4 +1,5 @@
 import { iLexPosition, iRule, iSymbolTable, iToken } from '../interfaces/interfaces';
+export declare const _COMPONENTS_DIRECTORY: string;
 export declare const COMPONENT_FILE_PATH: string;
 export declare const RENDERED_FILE_PATH: string;
 export declare const SELF_CLOSING_TAG_TYPES: Array<string>;

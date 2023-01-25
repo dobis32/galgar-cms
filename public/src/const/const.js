@@ -1,6 +1,7 @@
 import { _TYPE_CONTROL_GENERIC_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROL_PROPS_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_BAD_TOKEN, _TYPE_EOF_TOKEN, _TYPE_HTML_TOKEN, _TYPE_INJECTION_TOKEN, CONTROL_COMPONENT_TOKEN } from '../const/tokenTypes';
 import { _TYPE_BLANK_TOKEN } from './tokenTypes';
 const localdir = process.cwd();
+export const _COMPONENTS_DIRECTORY = 'D:\\galgar-cms\\user_components';
 export const COMPONENT_FILE_PATH = localdir + '\\user_components\\';
 export const RENDERED_FILE_PATH = localdir + '\\public\\rendered\\';
 export const SELF_CLOSING_TAG_TYPES = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];

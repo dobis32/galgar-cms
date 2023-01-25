@@ -1,12 +1,11 @@
-import * as os from 'os';
-import { EOF_TOKEN, BLANK_RULE, BLANK_TOKEN, CONTROL_RULE, HTML_RULE, INVALID_TOKEN_NAME, INTERMEDIATE_CONTENT, INVALID_INPUT_TOKEN } from './const/const';
-import { _TYPE_CONTROL_PROPS_TOKEN, _TYPE_CONTROL_GENERIC_TOKEN, _TYPE_CONTROL_FOR_TOKEN, _TYPE_CONTROL_COMPONENT_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_EOF_TOKEN, _TYPE_CONTENT_TOKEN, _TYPE_WHITESPACE_TOKEN, CONTROLFOR_FOR_TOKEN, _TYPE_CONTROL_IF_TOKEN, CONTROL_IMPORT_TOKEN, _TYPE_CONTROL_IMPORT_TOKEN, CONTROL_COMPONENT_TOKEN, CONTROL_PROPS_TOKEN } from './const/tokenTypes';
+import { EOF_TOKEN, BLANK_RULE, BLANK_TOKEN, CONTROL_PROPS_RULE, CONTROL_RULE, HTML_RULE, INVALID_TOKEN_NAME, INTERMEDIATE_CONTENT, INVALID_INPUT_TOKEN } from './const/const';
+import { _TYPE_CONTROL_PROPS_TOKEN, _TYPE_CONTROL_GENERIC_TOKEN, _TYPE_CONTROL_FOR_TOKEN, _TYPE_CONTROL_COMPONENT_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_CONTENT_TOKEN, _TYPE_WHITESPACE_TOKEN, CONTROLFOR_FOR_TOKEN, _TYPE_CONTROL_IF_TOKEN, CONTROL_IMPORT_TOKEN, _TYPE_CONTROL_IMPORT_TOKEN, CONTROL_COMPONENT_TOKEN, CONTROL_PROPS_TOKEN } from './const/tokenTypes';
 export default class Lexer {
     input;
     grammar;
     position = 0;
     constructor(input, grammar) {
-        this.input = input.replace(os.EOL, '');
+        this.input = input.trim();
         this.grammar = grammar;
     }
     getGrammar() {
@@ -20,24 +19,36 @@ export default class Lexer {
         return this.input;
     }
     lex() {
-        let start = this.position;
-        let ret = BLANK_TOKEN;
         const rules = this.grammar.getRules();
-        if (start == this.input.length - 1)
-            ret = EOF_TOKEN; // reached EOF
-        let offsetInput = `${this.input}`.trim().substring(start);
-        if (offsetInput.length == 0)
-            ret = EOF_TOKEN; // nothing to lex
-        else {
-            const { position, matchedRule } = this.getNextLexPosition(offsetInput, rules);
-            const token = this.generateToken(position, offsetInput, matchedRule);
-            ret = token;
-        }
-        if (ret.type == _TYPE_EOF_TOKEN || ret.type == _TYPE_INVALID_INPUT)
-            ret = INVALID_INPUT_TOKEN;
+        let start = this.position;
+        let offsetInput = `${this.input}`.substring(start);
+        let ret = Object.assign({}, BLANK_TOKEN);
+        if (start == this.input.length - 1 || offsetInput.trim().length == 0)
+            return ret = EOF_TOKEN; // reached EOF or nothing to lex
+        const { position, matchedRule } = this.getNextLexPosition(offsetInput, rules);
+        ret = this.generateToken(position, offsetInput, matchedRule);
+        if (position.start == -1 || ret.type == _TYPE_INVALID_INPUT)
+            throw new Error('[ GALGAR ERROR ] lex(): failed to lex; invalid input');
         else
             this.position += ret.raw.length;
         return ret;
+    }
+    generatePropsMap(token) {
+        if (token.type != _TYPE_CONTROL_PROPS_TOKEN)
+            throw new Error('[ GALGAR ERROR ] generatePropsMap(): input token was not a #PROPS token');
+        const propsArray = [];
+        // get token value
+        const tokValue = token.value;
+        // get everything in between #PROPS and ]]
+        const tokRuleEnd = CONTROL_RULE.end;
+        tokValue
+            .split(tokRuleEnd)[0] // get rid of ]]
+            .split(CONTROL_PROPS_RULE.start + CONTROL_PROPS_RULE.end)[1] // get rid of #PROPS
+            .split(',').map((s) => s.trim()).forEach((s) => {
+            if (s.trim().length > 0)
+                propsArray.push(s);
+        });
+        return propsArray;
     }
     getNextLexPosition(input, rules, offset) {
         if (offset == undefined)
@@ -70,7 +81,7 @@ export default class Lexer {
         return ret;
     }
     generateToken(pos, input, matchedRule) {
-        let ret = BLANK_TOKEN;
+        let ret = Object.assign({}, BLANK_TOKEN);
         let { start } = pos;
         if (start == -1)
             ret = INVALID_INPUT_TOKEN; // no token found
@@ -78,10 +89,12 @@ export default class Lexer {
             ret = this.tokenizeIntermediateContent(start, input); // white-space token or content token found
         else
             ret = this.validateToken(pos, matchedRule, input); // start position is zero, token found
+        if (ret == BLANK_TOKEN)
+            throw new Error('[ GALGAR ERROR ] generateToken(): failed to generate token');
         return ret;
     }
     tokenizeIntermediateContent(endIndex, input) {
-        let ret = BLANK_TOKEN;
+        let ret = Object.assign({}, BLANK_TOKEN);
         const token = input.substring(0, endIndex);
         const trimmed = token.split('\t').filter((t) => t.length > 0).join('').trim();
         if (trimmed.length == 0) { // is it just white space?

@@ -1,16 +1,19 @@
 import Grammar from './grammar';
 export declare class Galgar {
-    private grammar;
-    private initComponentMap;
-    private referenceQueue;
-    private entryPath;
-    constructor(grammar: Grammar);
-    parseProgram(rawPath: string, stData: any): Promise<string>;
+    private _grammar;
+    private _componentMap;
+    private _referenceQueue;
+    private _componentDirectory;
+    constructor(grammar: Grammar, componentDirectory: string);
+    parse(rawPath: string, stData: {
+        [key: string]: any;
+    }): Promise<string>;
     private resetResolvedComponents;
     private loadFileInput;
     private saveFileOutput;
     private lexTokens;
-    private lexComponentReferences;
+    private generateComponentMap;
+    private makePathAbsolute;
     private parseTokens;
     private getProps;
 }

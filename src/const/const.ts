@@ -6,7 +6,7 @@ import { _TYPE_WHITESPACE_TOKEN, _TYPE_CONTROL_GENERIC_TOKEN, CONTROLFOR_FOR_TOK
 import { _TYPE_BLANK_TOKEN } from './tokenTypes';
 
 const localdir = process.cwd();
-
+export const _COMPONENTS_DIRECTORY: string = 'D:\\galgar-cms\\user_components';
 export const COMPONENT_FILE_PATH: string = localdir + '\\user_components\\';
 export const RENDERED_FILE_PATH: string = localdir + '\\public\\rendered\\';
 export const SELF_CLOSING_TAG_TYPES: Array<string> = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];

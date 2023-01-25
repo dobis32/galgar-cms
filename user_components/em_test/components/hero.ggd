@@ -1,0 +1,20 @@
+[[ #PROPS ]]
+<table align="center">
+    <tr>
+        <td>
+            <h2 style="text-align:center">BLACK FRIDAY SALE!</h2>
+            <h4 style="text-align:center">30% OFF ORDERS +$100*</h4>
+        <td>
+    </tr>
+    <tr>
+        <td>
+            <table style="background-color: #000; padding: 30px 0px;" width="180">
+                <tr>
+                    <td >
+                        SHOP NOW
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

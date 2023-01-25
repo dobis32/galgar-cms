@@ -1,6 +1,6 @@
 import { CONTROL_FOR_ALIAS_INDEX, CONTROL_FOR_PREPOSITION_INDEX, CONTROL_FOR_SYMBOL_INDEX, CONTROL_RULE, INTERMEDIATE_CONTENT, FN_CLONE_TOKEN, FN_GET_PROPS_ARRAY } from './const/const';
 import { _TYPE_CONTROL_FOR_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROL_TOKEN_SUFFIX, CONTROLIF_ELSE_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_HTML_TOKEN, _TYPE_CONTROL_IF_TOKEN, _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN } from "./const/tokenTypes";
-import { AlgebraSolver } from "./bool";
+import { AlgebraSolver } from "./booleanSolver";
 import { ValueInjector } from "./injector";
 import { TokenIdentifier } from "./tokenIdentifier";
 export default class TokenParser {
