@@ -1,2 +1,3 @@
+[[ #COMPONENT @/dev/ComponentA.ggd ]]
 [[ #PROPS foo, bar, fizz, buzz ]]
 <h1>{{ foo }}</h1>

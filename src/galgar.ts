@@ -4,7 +4,7 @@ import Lexer from './lexer';
 import Grammar from './grammar';
 import TokenParser from './tokenParser';
 import { iComponentReference, iComponentMap, iSymbolTable, iToken, iSymbolContext } from './interfaces/interfaces';
-import { _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN, _TYPE_EOF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_WHITESPACE_TOKEN } from './const/tokenTypes';
+import { _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN, _TYPE_EOF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_WHITESPACE_TOKEN, CONTROL_COMPONENT_TOKEN } from './const/tokenTypes';
 import { FN_GET_PROPS_ARRAY, FN_CLONE_TOKEN, BLANK_TOKEN, INVALID_INPUT_TOKEN, RENDERED_FILE_PATH, COMPONENT_FILE_PATH, FILE_EXTENSION_GGD, FILE_EXTENSION_HTML, EOF_TOKEN } from './const/const';
 import { SymbolTable } from './symbolTable';
 import * as _fs from 'fs';
@@ -92,12 +92,14 @@ export class Galgar {
 
     private async generateComponentMap(rawPath:string): Promise<string> {
         this._referenceQueue.push(rawPath)
-        const componentReferenceQueue: Array<string> = [ rawPath ];
+        //const componentReferenceQueue: Array<string> = [ rawPath ];
         let currentResourceLocation: string = '';
-        while (componentReferenceQueue.length > 0) {
+        while (this._referenceQueue.length > 0) {
             // init info
-            const rawReference: string = componentReferenceQueue.shift() as string;
+            const rawReference: string = this._referenceQueue.shift() as string;
             const absolutePath: string = this.makePathAbsolute(rawReference); // force an absolutePath
+            console.log(absolutePath);
+            const pathRelativeToBase: string = absolutePath.replace(this._componentDirectory, '@');
             const identifier: string = absolutePath.split(_path.sep).pop()?.split('.')[0] as string;
             const fileContents: string = await this.loadFileInput(absolutePath);
             const compRef: iComponentReference = { name: identifier, raw: fileContents, tokens: [], props: [] };
@@ -111,12 +113,13 @@ export class Galgar {
             while (token.type != _TYPE_EOF_TOKEN) {
                 compRef.tokens.push(token);
                 if (token.type == _TYPE_CONTROL_PROPS_TOKEN) compRef.props = lexer.generatePropsMap(token);
+                if (token.name == CONTROL_COMPONENT_TOKEN) {
+                    const path: string = this.getPathFromTokenReference(token.value);
+                    this._referenceQueue.push(path);
+                }
                 token = lexer.lex(); // this is very important
             }
-            // console.log(absolutePath);
-            // console.log('IDENTIFIER: ' + identifier);
             currentResourceLocation = absolutePath; // update current resource location -- this is very important
-            console.log(compRef);
 
         }
         const entryComponentIdentifier: string = rawPath.split(_path.sep).pop() as string;
@@ -147,7 +150,10 @@ export class Galgar {
         // return entryComponentIdentifier;
     }
 
-   
+    private getPathFromTokenReference(tokenAsString: string): string {
+        // expected format: [[ #CONTROL PATH ]]
+        return tokenAsString.split(' ')[2];
+    }
 
     private makePathAbsolute(path: string, relativeTo: string = ''): string {
         const absoluteTokens: Array<string> = [];

@@ -1,6 +1,6 @@
 import Lexer from './lexer';
 import TokenParser from './tokenParser';
-import { _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN, _TYPE_EOF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_WHITESPACE_TOKEN } from './const/tokenTypes';
+import { _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN, _TYPE_EOF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_WHITESPACE_TOKEN, CONTROL_COMPONENT_TOKEN } from './const/tokenTypes';
 import { FN_GET_PROPS_ARRAY, FN_CLONE_TOKEN, BLANK_TOKEN, INVALID_INPUT_TOKEN, RENDERED_FILE_PATH, FILE_EXTENSION_HTML } from './const/const';
 import { SymbolTable } from './symbolTable';
 import * as _fs from 'fs';
@@ -81,12 +81,14 @@ export class Galgar {
     }
     async generateComponentMap(rawPath) {
         this._referenceQueue.push(rawPath);
-        const componentReferenceQueue = [rawPath];
+        //const componentReferenceQueue: Array<string> = [ rawPath ];
         let currentResourceLocation = '';
-        while (componentReferenceQueue.length > 0) {
+        while (this._referenceQueue.length > 0) {
             // init info
-            const rawReference = componentReferenceQueue.shift();
+            const rawReference = this._referenceQueue.shift();
             const absolutePath = this.makePathAbsolute(rawReference); // force an absolutePath
+            console.log(absolutePath);
+            const pathRelativeToBase = absolutePath.replace(this._componentDirectory, '@');
             const identifier = absolutePath.split(_path.sep).pop()?.split('.')[0];
             const fileContents = await this.loadFileInput(absolutePath);
             const compRef = { name: identifier, raw: fileContents, tokens: [], props: [] };
@@ -99,12 +101,13 @@ export class Galgar {
                 compRef.tokens.push(token);
                 if (token.type == _TYPE_CONTROL_PROPS_TOKEN)
                     compRef.props = lexer.generatePropsMap(token);
+                if (token.name == CONTROL_COMPONENT_TOKEN) {
+                    const path = this.getPathFromTokenReference(token.value);
+                    this._referenceQueue.push(path);
+                }
                 token = lexer.lex(); // this is very important
             }
-            // console.log(absolutePath);
-            // console.log('IDENTIFIER: ' + identifier);
             currentResourceLocation = absolutePath; // update current resource location -- this is very important
-            console.log(compRef);
         }
         const entryComponentIdentifier = rawPath.split(_path.sep).pop();
         return entryComponentIdentifier;
@@ -126,6 +129,10 @@ export class Galgar {
         // }
         // const entryComponentIdentifier: string = rawPath.split(_path.sep).pop() as string;
         // return entryComponentIdentifier;
+    }
+    getPathFromTokenReference(tokenAsString) {
+        // expected format: [[ #CONTROL PATH ]]
+        return tokenAsString.split(' ')[2];
     }
     makePathAbsolute(path, relativeTo = '') {
         const absoluteTokens = [];

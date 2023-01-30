@@ -147,7 +147,7 @@ export default class Lexer {
                 ret = CONTROL_PROPS_TOKEN;
                 break;
         }
-        return ret;
+        return `${ret}`;
     }
     validateToken(pos, rule, input) {
         let { start, end, next } = pos;
@@ -206,7 +206,7 @@ export default class Lexer {
                 ret = _TYPE_CONTROL_PROPS_TOKEN;
                 break;
         }
-        return ret;
+        return `${ret}`;
     }
     getTokenName(raw, rule) {
         return rule.type == _TYPE_CONTROL_GENERIC_TOKEN ? this.getControlTokenName(raw) : this.getHTMLTokenName(raw);
@@ -216,7 +216,7 @@ export default class Lexer {
         const endLength = HTML_RULE.end.length;
         const stripped = raw.substring(startLength, raw.length - endLength).trim().replace('/', '');
         const splitString = stripped.split(' ');
-        const name = splitString ? splitString[0] : INVALID_TOKEN_NAME;
+        const name = splitString ? splitString[0] : Object.assign({}, INVALID_TOKEN_NAME);
         return name;
     }
 }

@@ -152,7 +152,7 @@ export default class Lexer {
                 break;
         }
 
-        return ret;
+        return `${ret}`;
     }
 
     validateToken(pos: iLexPosition, rule: iRule, input: string): iToken {
@@ -212,7 +212,7 @@ export default class Lexer {
                 ret = _TYPE_CONTROL_PROPS_TOKEN;
                 break;
         }
-        return ret;
+        return `${ret}`;
     }
 
     getTokenName(raw: string, rule: iRule): string {
@@ -224,7 +224,7 @@ export default class Lexer {
         const endLength = HTML_RULE.end.length;
         const stripped: string = raw.substring(startLength, raw.length - endLength).trim().replace('/', '');
         const splitString: Array<string> = stripped.split(' ');
-        const name = splitString? splitString[0] : INVALID_TOKEN_NAME;
+        const name = splitString? splitString[0] : Object.assign({}, INVALID_TOKEN_NAME);
         return name;
     }
 }

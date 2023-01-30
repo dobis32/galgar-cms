@@ -13,6 +13,7 @@ export declare class Galgar {
     private saveFileOutput;
     private lexTokens;
     private generateComponentMap;
+    private getPathFromTokenReference;
     private makePathAbsolute;
     private parseTokens;
     private getProps;
