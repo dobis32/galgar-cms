@@ -1,0 +1,15 @@
+{
+    "stData": {
+        "header": {
+            "logo": {
+                "style": {
+                    "td": "color: #000; font-size: 17px; line-height: 20px; padding: 30px 0px 30px 0px; font-family: Arial, sans-serif;"
+                },
+                "classes": {
+                    "td": "padT20"
+                }
+            }
+        }
+    },
+    "identifier": "tests\\em_dev\\main"
+}

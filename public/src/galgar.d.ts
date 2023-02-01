@@ -8,13 +8,12 @@ export declare class Galgar {
     parse(rawPath: string, stData: {
         [key: string]: any;
     }): Promise<string>;
-    private resetResolvedComponents;
     private loadFileInput;
     private saveFileOutput;
     private lexTokens;
     private generateComponentMap;
     private getPathFromTokenReference;
-    private makePathAbsolute;
+    makePathAbsolute(path: string, relativeTo?: string): string;
     private parseTokens;
     private getProps;
 }

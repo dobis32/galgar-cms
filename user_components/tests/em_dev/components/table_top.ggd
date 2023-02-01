@@ -1,0 +1,4 @@
+[[ #PROPS style, classes ]]
+<table width="600" cellspacing="0" cellpadding="0" align="center">
+<tr valign="top">
+<td style="{{ style.td }}" class="{{ classes.td }}" valign="top">

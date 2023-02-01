@@ -1,7 +1,7 @@
 import Grammar from './src/grammar';
 import { HTML_RULE, CONTROL_RULE } from './src/const/const';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import * as _path from 'path';
 import { Galgar } from './src/galgar';
 // const ALIAS_1_1_VALUE: string = '';
 // const ALIAS_1_1_NAME: string = 'alias1';
@@ -41,8 +41,12 @@ import { Galgar } from './src/galgar';
 // solver = new AlgebraSolver(initialSymbolTable, enumMap);
 //const result: boolean = solver.solveSimpleExpression(truthyExpression1);
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const _COMPONENTS_DIRECTORY = 'D:\\galgar-cms\\user_components';
+const __dirname = _path.dirname(__filename);
+const directoryTokens = ['C:', 'code', 'galgar-cms', 'user_components']; // lappy
+//const directoryTokens = ['D:', 'galgar-cms', 'user_components']; // desktop
+const _COMPONENTS_DIRECTORY = directoryTokens.join(_path.sep);
 const grammar = new Grammar([HTML_RULE, CONTROL_RULE]);
 const _galgar = new Galgar(grammar, _COMPONENTS_DIRECTORY);
-_galgar.parse(_COMPONENTS_DIRECTORY + '\\myComponent.ggd', {});
+_galgar.parse(_COMPONENTS_DIRECTORY + _path.sep + 'myComponent.ggd', {});
+// const contents = _fs.readFileSync('C:\\code\\galgar-cms\\user_components\\myComponent.ggd', {encoding:'utf8', flag:'rs'});
+// const path = _galgar.makePathAbsolute('.' + _path.sep + 'ComponentB');

@@ -1,5 +1,3 @@
-// import { readFileSync } from 'fs';
-import { StringDecoder } from 'string_decoder';
 import Lexer from './lexer';
 import Grammar from './grammar';
 import TokenParser from './tokenParser';
@@ -28,26 +26,28 @@ export class Galgar {
     async parse(rawPath: string, stData: { [key:string] : any } ): Promise<string> {
         // map components
         const entryComponentIdentifier: string = await this.generateComponentMap(rawPath);
-
+        console.log(entryComponentIdentifier);
+        console.log(this._componentMap);
         // BEGIN PARSE LOOP
-
         // Init some parsing stuff
-        // const symbolContextStack: Array<iSymbolContext> = [ { aliases: {}, props: stData } ];
+        const symbolContextStack: Array<iSymbolContext> = [ { aliases: {}, props: stData } ];
+        // Get entry component from the component map
+        const entryComponent: iComponentReference = this._componentMap[entryComponentIdentifier];
 
-        // const entryComponent: iComponentReference = this._componentMap[entryComponentIdentifier];
+        // Get the corresponding tokens
         // const entryComponentTokens: Array<iToken> = entryComponent.tokens;
+        // Get the corresponding props 
         // const entryComponentProps: Array<string> = entryComponent.props;
         // const output: string = this.parseTokens(entryComponentTokens, symbolContextStack, entryComponentProps);
-        // this.resetResolvedComponents();
         // this.saveFileOutput(entryComponentIdentifier, output);
-        // return output;
-        return '';
+        let output = '';
+        return output;
     }
 
-    private resetResolvedComponents(): void {
-        this._componentMap = {};
-        this._referenceQueue = [];
-    }
+    // private resetResolvedComponents(): void {
+    //     this._componentMap = {};
+    //     this._referenceQueue = [];
+    // }
 
     private async loadFileInput(absolutePath: string): Promise<string> {
         let input: string = '';
@@ -92,16 +92,20 @@ export class Galgar {
 
     private async generateComponentMap(rawPath:string): Promise<string> {
         this._referenceQueue.push(rawPath)
+        const entryComponentPath: string = this.makePathAbsolute(rawPath);
         //const componentReferenceQueue: Array<string> = [ rawPath ];
         let currentResourceLocation: string = '';
         while (this._referenceQueue.length > 0) {
             // init info
             const rawReference: string = this._referenceQueue.shift() as string;
-            const absolutePath: string = this.makePathAbsolute(rawReference); // force an absolutePath
-            console.log(absolutePath);
-            const pathRelativeToBase: string = absolutePath.replace(this._componentDirectory, '@');
+            const absolutePath: string = this.makePathAbsolute(rawReference, currentResourceLocation); // force an absolutePath
+            const absolutePathTokens: Array<string> = absolutePath.split(_path.sep);
+            absolutePathTokens.pop(); // remove resource name.extension
+            // const pathRelativeToBase: string = absolutePath.replace(this._componentDirectory, '@');
             const identifier: string = absolutePath.split(_path.sep).pop()?.split('.')[0] as string;
             const fileContents: string = await this.loadFileInput(absolutePath);
+            
+            currentResourceLocation = absolutePathTokens.join(_path.sep);
             const compRef: iComponentReference = { name: identifier, raw: fileContents, tokens: [], props: [] };
 
             // a lexer is required to map tokens to each component reference
@@ -119,16 +123,9 @@ export class Galgar {
                 }
                 token = lexer.lex(); // this is very important
             }
-            currentResourceLocation = absolutePath; // update current resource location -- this is very important
-
-        }
-        const entryComponentIdentifier: string = rawPath.split(_path.sep).pop() as string;
-        return entryComponentIdentifier;
-
-
-
-
-
+            this._componentMap[absolutePath] = compRef;
+        }  
+        return entryComponentPath;
 
         // this._referenceQueue.push(entryComponentIdentifier);
         // while (this._referenceQueue.length > 0) {
@@ -155,10 +152,13 @@ export class Galgar {
         return tokenAsString.split(' ')[2];
     }
 
-    private makePathAbsolute(path: string, relativeTo: string = ''): string {
+    makePathAbsolute(path: string, relativeTo?: string): string {
+        if (relativeTo == undefined) relativeTo = '';
         const absoluteTokens: Array<string> = [];
         const pathTokens: Array<string> = path.replaceAll('/', _path.sep).split(_path.sep).map((s:string) => s.trim());
-        if (pathTokens)
+        let targetResourceToken: string = pathTokens[pathTokens.length - 1];
+        const expectedExtensionIndex: number = targetResourceToken.length - FILE_EXTENSION_GGD.length - 1;
+        if (targetResourceToken.indexOf(FILE_EXTENSION_GGD) != expectedExtensionIndex) targetResourceToken += '.ggd';
         for (let i = 0; i < pathTokens.length; i++) {
             const tok: string = pathTokens[i];
             if (tok == '@' && i > 0) throw new Error('[ GALGAR ERROR ] makePathAbsolute(): found invalid directory base reference ("@")');

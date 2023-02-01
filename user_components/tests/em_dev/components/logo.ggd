@@ -1,0 +1,6 @@
+[[ #COMPONENT .\components\table_top AS TableTop ]]
+[[ #COMPONENT .\components\table_bottom AS TableBottom ]]
+[[ #PROPS style, classes ]]
+<TableTop style={{ style.td }} classes={{ classes.td }} />
+    <span style="font-size: 40px;font-family: Impact;text-align: center;" >LOGO HERE</span>
+<TableBottom />

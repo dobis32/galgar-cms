@@ -1,0 +1,3 @@
+[[ #COMPONENT ./components/logo AS Logo]]
+[[ #PROPS data ]]
+<Logo data={{ data.logo }} />

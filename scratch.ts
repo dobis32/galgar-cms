@@ -9,8 +9,10 @@ import { ALGEBRAIC_OR, ALGEBRAIC_AND, ALGEBRAIC_NOT, HTML_RULE, CONTROL_RULE, IN
 import { AlgebraSolver } from './src/booleanSolver';
 import { TokenIdentifier } from './src/tokenIdentifier';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import * as _path from 'path';
 import { Galgar } from './src/galgar';
+import * as _fs from 'fs';
+
 // const ALIAS_1_1_VALUE: string = '';
 // const ALIAS_1_1_NAME: string = 'alias1';
 // const ALIAS_1_2_VALUE: number = 456;
@@ -50,10 +52,12 @@ import { Galgar } from './src/galgar';
 //const result: boolean = solver.solveSimpleExpression(truthyExpression1);
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const _COMPONENTS_DIRECTORY: string = 'D:\\galgar-cms\\user_components';
+const __dirname = _path.dirname(__filename);
+const directoryTokens = ['C:', 'code', 'galgar-cms', 'user_components']; // lappy
+//const directoryTokens = ['D:', 'galgar-cms', 'user_components']; // desktop
+const _COMPONENTS_DIRECTORY: string = directoryTokens.join(_path.sep);
 const grammar: Grammar = new Grammar([ HTML_RULE, CONTROL_RULE ]);
 const _galgar: Galgar = new Galgar(grammar, _COMPONENTS_DIRECTORY);
-_galgar.parse(_COMPONENTS_DIRECTORY + '\\myComponent.ggd', {});
-
+_galgar.parse(_COMPONENTS_DIRECTORY + _path.sep + 'myComponent.ggd', {});
+// const contents = _fs.readFileSync('C:\\code\\galgar-cms\\user_components\\myComponent.ggd', {encoding:'utf8', flag:'rs'});
+// const path = _galgar.makePathAbsolute('.' + _path.sep + 'ComponentB');
