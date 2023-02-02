@@ -13,17 +13,17 @@ describe('tokenParser.ts', () => {
     let tokens: Array<iToken>;
     beforeEach(() => {
         componentMapStack = [ TESTING_COMPONENT_REF_MAP ];
-        const contextStack: Array<iSymbolContext> = TEST_PACKAGE_DYNAMIC_HEADER.symbolTableStack;
-        const initProps: Array<string> = TEST_PACKAGE_DYNAMIC_HEADER.component.props;
+        const contextStack: Array<iSymbolContext> = TEST_PACKAGE_DYNAMIC_HEADER.symbolTableStack.map((ctx: iSymbolContext) => Object.assign({}, ctx));
+        const initProps: Array<string> = TEST_PACKAGE_DYNAMIC_HEADER.component.props.map((s: string) => `${s}`);;
         st = new SymbolTable(contextStack);
-        const tokens: Array<iToken> = TEST_PACKAGE_DYNAMIC_HEADER.component.tokens;
+        const tokens: Array<iToken> = TEST_PACKAGE_DYNAMIC_HEADER.component.tokens.map((t: iToken) => Object.assign({}, t));
     });
 
     it('should have a function to parse the input tokens when the input is valid', () => {
-        const testTokens: Array<iToken> = TEST_PACKAGE_DYNAMIC_HEADER.component.tokens;
-        const testProps: Array<string> = TEST_PACKAGE_DYNAMIC_HEADER.component.props;
+        const testTokens: Array<iToken> = TEST_PACKAGE_DYNAMIC_HEADER.component.tokens.map((t:iToken) => t);
+        const testProps: Array<string> = TEST_PACKAGE_DYNAMIC_HEADER.component.props.map((s:string) => s);
+        parser = new TokenParser(testTokens, st, testProps, TESTING_COMPONENT_REF_MAP);
         parser.validate = jest.fn(parser.validate);
-        parser = new TokenParser(tokens, st, testProps, TESTING_COMPONENT_REF_MAP);
         const parsedTokens: Array<iToken> = parser.parse();
         expect(parser.parse).toBeDefined();
         expect(typeof parser.parse).toEqual('function');
@@ -33,7 +33,6 @@ describe('tokenParser.ts', () => {
     });
 
     it('should not attempt to parse when the provided input tokens are invalid', () => {
-        parser.validate = jest.fn(parser.validate);
         const invalidTokens: Array<iToken> = [ {
             type: _TYPE_HTML_TOKEN,
             value: '<table>',
@@ -42,13 +41,15 @@ describe('tokenParser.ts', () => {
             enumerationMap: {}
         } ]; // incomplete/invalid token set
         parser = new TokenParser(invalidTokens, st, [], TESTING_COMPONENT_REF_MAP);
+        parser.validate = jest.fn(parser.validate);
         expect(() => { parser.parse(); }).toThrow();
     });
 
     it('should be able to parse nested IF statements correctly', () => {
         const testPack: iTestPackage = TEST_PACKAGE_NESTED_IF;
-        const tokens: Array<iToken> = testPack.component.tokens;
-        const props: Array<string> = testPack.component.props;
+        const tokens: Array<iToken> = testPack.component.tokens.map((t:iToken)=> t);
+        console.log('TEST IF STATEMENT....');
+        const props: Array<string> = testPack.component.props.map((s:string) => s);
         const st: SymbolTable = new SymbolTable(testPack.symbolTableStack);
         const parser: TokenParser = new TokenParser(tokens, st, props, TESTING_COMPONENT_REF_MAP);
         const result: Array<iToken> = parser.parse();

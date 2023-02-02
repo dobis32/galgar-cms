@@ -1,4 +1,4 @@
-import { AlgebraSolver } from '../src/bool';
+import { AlgebraSolver } from '../src/booleanSolver';
 import { iEnumerationMap, iSymbolContext } from '../src/interfaces/interfaces';
 import { SymbolTable } from '../src/symbolTable';
 import { ALGEBRAIC_OR, ALGEBRAIC_AND, ALGEBRAIC_NOT } from '../src/const/const';

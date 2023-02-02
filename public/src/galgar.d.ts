@@ -14,6 +14,6 @@ export declare class Galgar {
     private generateComponentMap;
     private getPathFromTokenReference;
     makePathAbsolute(path: string, relativeTo?: string): string;
-    private parseTokens;
+    private beginParseLoop;
     private getProps;
 }

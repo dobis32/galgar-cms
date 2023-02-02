@@ -4,6 +4,12 @@ export interface iRule {
     end: string
 }
 
+export interface iTestPackage {
+    component: iComponentReference;
+    symbolTableStack: Array<iSymbolContext>;
+    expectedResult?: Array<iToken>
+}
+
 export interface iHTMLAttribute {
     name: string;
     value: string;
@@ -34,8 +40,9 @@ export interface iEnumerationMap {
 export interface iComponentReference {
     name: string,
     raw: string,
-    props: Array<string>;
-    tokens: Array<iToken>
+    props: Array<string>,
+    tokens: Array<iToken>,
+    path: string
 }
 
 export interface iComponentMap {

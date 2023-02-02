@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as _path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { iLexPosition, iRule, iSymbolTable, iToken } from '../interfaces/interfaces';
@@ -42,6 +42,27 @@ export const FN_CLONE_TOKEN = (t: iToken) => {
     const clone = Object.assign({}, t);
     clone.enumerationMap = Object.assign({}, t.enumerationMap);
     return clone;
+}
+
+export const FN_MAKE_PATH_ABSOLUTE = (absoluteBasePath: string, path: string, relativeTo?: string) => {
+    if (relativeTo == undefined) relativeTo = '';
+    const absoluteTokens: Array<string> = [];
+    const pathTokens: Array<string> = path.replaceAll('/', _path.sep).split(_path.sep).map((s:string) => s.trim());
+    let targetResourceToken: string = pathTokens[pathTokens.length - 1];
+    const expectedExtensionIndex: number = targetResourceToken.length - FILE_EXTENSION_GGD.length - 1;
+    if (targetResourceToken.indexOf(FILE_EXTENSION_GGD) != expectedExtensionIndex) targetResourceToken += '.ggd';
+    for (let i = 0; i < pathTokens.length; i++) {
+        const tok: string = pathTokens[i];
+        if (tok == '@' && i > 0) throw new Error('[ GALGAR ERROR ] makePathAbsolute(): found invalid directory base reference ("@")');
+        else if (tok == '..' && absoluteTokens.length == 0) throw new Error('[ GALGAR ERROR ] makePathAbsolute(): invalid parent directory; check your path references and try again');
+        else if (tok == '@') absoluteBasePath.split(_path.sep).forEach((t: string) => {
+            absoluteTokens.push(t);
+        });
+        else if (tok == '.' && i == 0) relativeTo.split(_path.sep).forEach((t:string) => absoluteTokens.push(t));
+        else if (tok == '..') absoluteTokens.shift();
+        else if (tok != '.') absoluteTokens.push(tok);
+    }
+    return absoluteTokens.join(_path.sep);
 }
 
 export const FN_GET_PROPS_ARRAY = (propsToken: iToken) => {

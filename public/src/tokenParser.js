@@ -3,6 +3,7 @@ import { _TYPE_CONTROL_FOR_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROL_TOKEN_SUFFIX,
 import { AlgebraSolver } from "./booleanSolver";
 import { ValueInjector } from "./injector";
 import { TokenIdentifier } from "./tokenIdentifier";
+import * as _path from "path";
 export default class TokenParser {
     input;
     initProps;
@@ -11,7 +12,7 @@ export default class TokenParser {
     componentMap;
     componentAliasStack;
     constructor(tokens, st, initProps, initComponentMap, cas) {
-        this.input = tokens;
+        this.input = tokens.map((t) => t);
         this.outputTokens = [];
         this.initProps = initProps;
         this.symbolTable = st;
@@ -155,8 +156,9 @@ export default class TokenParser {
     }
     parseComponentControl(controlToken) {
         const compMap = this.getAliasComponentMap();
-        const temp = controlToken.value.split(' '); // [[ #IMPORT Component AS Alias ]]
-        const identifier = temp[2].split('\\').pop();
+        const temp = controlToken.value.split(' '); // [[ #IMPORT ComponentPath AS Alias ]]
+        const path = temp[2].replaceAll('/', _path.sep).split(_path.sep).pop();
+        const identifier = path.replace('.ggd', '');
         const alias = temp[4] ? temp[4] : identifier;
         const component = this.componentMap[identifier];
         if (component == undefined)
@@ -339,6 +341,7 @@ export default class TokenParser {
     }
     tokenIsControlToken(tok) {
         const suffixIndex = tok.type.indexOf(CONTROL_TOKEN_SUFFIX);
+        console.log(suffixIndex);
         return suffixIndex == 0 ? true : false;
     }
     controlForEvaluate(forToken) {
@@ -373,12 +376,7 @@ export default class TokenParser {
         return ret;
     }
     validate() {
-        const tokens = this.input;
-        const tokensAreProperlyClosed = this.tokensProperlyEnclosed(tokens);
-        let validInput = false;
-        if (tokensAreProperlyClosed)
-            validInput = true;
-        return validInput;
+        return this.tokensProperlyEnclosed(this.input);
     }
     tokensProperlyEnclosed(tokens) {
         let ret = false;
@@ -410,12 +408,14 @@ export default class TokenParser {
                     }
                     const popped = closingStack.pop();
                     if (popped.type != t.type) {
-                        const errMsg = `[ PARSER ERROR ] tokensProperlyEnclosed(): Unexpected token name popped when validating input ${t.name}... popped ${popped.name}`;
+                        const errMsg = `[ PARSER ERROR ] tokensProperlyEnclosed(): Unexpected token name popped when validating input ${t.type}... popped ${popped.type}`;
                         throw new Error(errMsg);
                     }
                 }
             }
         }
+        console.log('CLOSING STACK....\n\n');
+        console.log(closingStack);
         if (closingStack.length == 0)
             ret = true;
         return ret;

@@ -1,3 +1,4 @@
+import * as _path from 'path';
 import { _TYPE_CONTROL_GENERIC_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROL_PROPS_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_BAD_TOKEN, _TYPE_EOF_TOKEN, _TYPE_HTML_TOKEN, _TYPE_INJECTION_TOKEN, CONTROL_COMPONENT_TOKEN } from '../const/tokenTypes';
 import { _TYPE_BLANK_TOKEN } from './tokenTypes';
 const localdir = process.cwd();
@@ -37,6 +38,34 @@ export const FN_CLONE_TOKEN = (t) => {
     const clone = Object.assign({}, t);
     clone.enumerationMap = Object.assign({}, t.enumerationMap);
     return clone;
+};
+export const FN_MAKE_PATH_ABSOLUTE = (absoluteBasePath, path, relativeTo) => {
+    if (relativeTo == undefined)
+        relativeTo = '';
+    const absoluteTokens = [];
+    const pathTokens = path.replaceAll('/', _path.sep).split(_path.sep).map((s) => s.trim());
+    let targetResourceToken = pathTokens[pathTokens.length - 1];
+    const expectedExtensionIndex = targetResourceToken.length - FILE_EXTENSION_GGD.length - 1;
+    if (targetResourceToken.indexOf(FILE_EXTENSION_GGD) != expectedExtensionIndex)
+        targetResourceToken += '.ggd';
+    for (let i = 0; i < pathTokens.length; i++) {
+        const tok = pathTokens[i];
+        if (tok == '@' && i > 0)
+            throw new Error('[ GALGAR ERROR ] makePathAbsolute(): found invalid directory base reference ("@")');
+        else if (tok == '..' && absoluteTokens.length == 0)
+            throw new Error('[ GALGAR ERROR ] makePathAbsolute(): invalid parent directory; check your path references and try again');
+        else if (tok == '@')
+            absoluteBasePath.split(_path.sep).forEach((t) => {
+                absoluteTokens.push(t);
+            });
+        else if (tok == '.' && i == 0)
+            relativeTo.split(_path.sep).forEach((t) => absoluteTokens.push(t));
+        else if (tok == '..')
+            absoluteTokens.shift();
+        else if (tok != '.')
+            absoluteTokens.push(tok);
+    }
+    return absoluteTokens.join(_path.sep);
 };
 export const FN_GET_PROPS_ARRAY = (propsToken) => {
     const temp = propsToken.value.split(' '); // [[ #PROPS msg1,msg2, data ]]

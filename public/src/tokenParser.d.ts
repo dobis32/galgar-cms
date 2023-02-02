@@ -28,7 +28,7 @@ export default class TokenParser {
     private inflateForControl;
     getOutputAsText(): string;
     private getControlPositioning;
-    private tokenIsControlToken;
+    tokenIsControlToken(tok: iToken): boolean;
     private controlForEvaluate;
     private controlIfEvaluate;
     validate(): boolean;

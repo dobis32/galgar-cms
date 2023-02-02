@@ -5,7 +5,7 @@ import { SymbolTable } from "./symbolTable";
 import { AlgebraSolver } from "./booleanSolver";
 import { ValueInjector } from "./injector";
 import { TokenIdentifier } from "./tokenIdentifier";
-
+import * as _path from "path";
 export default class TokenParser {
     private input: Array<iToken>;
     private initProps: Array<string>;
@@ -15,7 +15,7 @@ export default class TokenParser {
     private componentAliasStack: Array<iComponentMap>;
 
     constructor (tokens: Array<iToken>, st: SymbolTable, initProps: Array<string>, initComponentMap: iComponentMap, cas?: Array<iComponentMap>) {
-        this.input = tokens;
+        this.input = tokens.map((t:iToken) => t);
         this.outputTokens = [ ];
         this.initProps = initProps;
         this.symbolTable = st;
@@ -162,13 +162,14 @@ export default class TokenParser {
 
     private parseComponentControl(controlToken: iToken): void {
         const compMap: iComponentMap = this.getAliasComponentMap();
-        const temp: Array<string> = controlToken.value.split(' '); // [[ #IMPORT Component AS Alias ]]
-        const identifier: string = temp[2].split('\\').pop() as string;
+        const temp: Array<string> = controlToken.value.split(' '); // [[ #IMPORT ComponentPath AS Alias ]]
+        const path: string = temp[2].replaceAll('/', _path.sep).split(_path.sep).pop() as string;
+        const identifier: string = path.replace('.ggd', '');
         const alias: string = temp[4] ? temp[4] : identifier;
         const component: iComponentReference = this.componentMap[identifier];
         if (component == undefined) throw new Error('[ PARSER ERROR ] parseComponentControl(): Failed to find component reference with identifier ' + identifier);
-        this.setComponentAlias(component, alias)
-    }
+        this.setComponentAlias(component, alias);
+    } 
 
     private setComponentAlias(component: iComponentReference, alias: string): void {
         const aliasMap = this.getAliasComponentMap();
@@ -332,8 +333,9 @@ export default class TokenParser {
         return { start: -1, next: nextControlIndex, end: endControlIndex };
     }
 
-    private tokenIsControlToken(tok: iToken): boolean {
+    public tokenIsControlToken(tok: iToken): boolean {
         const suffixIndex = tok.type.indexOf(CONTROL_TOKEN_SUFFIX);
+        console.log(suffixIndex);
         return suffixIndex == 0 ? true : false;
     }
 
@@ -366,11 +368,7 @@ export default class TokenParser {
     }
 
     validate(): boolean {
-        const tokens: Array<iToken> = this.input;
-        const tokensAreProperlyClosed: boolean = this.tokensProperlyEnclosed(tokens);
-        let validInput: boolean = false;
-        if (tokensAreProperlyClosed) validInput = true;
-        return validInput;
+        return this.tokensProperlyEnclosed(this.input);
     }
 
     private tokensProperlyEnclosed(tokens: Array<iToken>): boolean {
@@ -400,12 +398,14 @@ export default class TokenParser {
                     }
                     const popped: iToken = closingStack.pop() as iToken;
                     if (popped.type != t.type) {
-                        const errMsg: string = `[ PARSER ERROR ] tokensProperlyEnclosed(): Unexpected token name popped when validating input ${t.name}... popped ${popped.name}`;
+                        const errMsg: string = `[ PARSER ERROR ] tokensProperlyEnclosed(): Unexpected token name popped when validating input ${t.type}... popped ${popped.type}`;
                         throw new Error(errMsg);
                     }
                 }
             }
         }
+        console.log('CLOSING STACK....\n\n');
+        console.log(closingStack);
         if (closingStack.length == 0) ret = true;
         return ret;
     }

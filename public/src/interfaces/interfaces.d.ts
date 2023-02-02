@@ -3,6 +3,11 @@ export interface iRule {
     start: string;
     end: string;
 }
+export interface iTestPackage {
+    component: iComponentReference;
+    symbolTableStack: Array<iSymbolContext>;
+    expectedResult?: Array<iToken>;
+}
 export interface iHTMLAttribute {
     name: string;
     value: string;
@@ -30,6 +35,7 @@ export interface iComponentReference {
     raw: string;
     props: Array<string>;
     tokens: Array<iToken>;
+    path: string;
 }
 export interface iComponentMap {
     [key: string]: iComponentReference;

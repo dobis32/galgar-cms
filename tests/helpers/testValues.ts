@@ -1,5 +1,5 @@
 import { iSymbolContext, iToken, iComponentReference, iComponentMap } from '../../src/interfaces/interfaces';
-import { CONTROLIF_ELSE_TOKEN, CONTROLIF_IF_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROL_PROPS_TOKEN, _TYPE_HTML_TOKEN, _TYPE_CONTENT_TOKEN } from '../../src/const/tokenTypes';
+import { _TYPE_CONTROL_IF_TOKEN,  _TYPE_CONTROL_PROPS_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_IF_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROL_PROPS_TOKEN, _TYPE_HTML_TOKEN, _TYPE_CONTENT_TOKEN } from '../../src/const/tokenTypes';
 import { INTERMEDIATE_CONTENT } from '../../src/const/const';
 
 export interface iTestPackage {
@@ -34,6 +34,7 @@ export const TEST_COMPONENT_DYNAMIC_HEADER: iComponentReference = {
             enumerationMap: {}
         }
     ],
+    path: 'SOME_PATH',
     props: [ 'msg' ]
 }
 
@@ -54,6 +55,7 @@ export const TEST_COMPONENT_DYNAMIC_INPUT: iComponentReference = {
             enumerationMap: {}
         }
     ],
+    path: 'SOME_PATH',
     props: [ 'val' ]
 }
 
@@ -96,14 +98,14 @@ export const TEST_TOKEN_META: iToken = {
 
 export const TEST_TOKENS_NESTED_IF: Array<iToken> = [
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTROL_PROPS_TOKEN,
         value: '[[ #PROPS bool1, bool2, bool3 ]]',
         raw: '[[ #PROPS bool1, bool2, bool3 ]]',
         name: CONTROL_PROPS_TOKEN,
         enumerationMap: {}
     }, 
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTROL_IF_TOKEN,
         value: '[[ #IF bool1 ]]',
         raw: '[[ #IF bool1 ]]',
         name: CONTROLIF_IF_TOKEN,
@@ -117,7 +119,7 @@ export const TEST_TOKENS_NESTED_IF: Array<iToken> = [
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTROL_IF_TOKEN,
         value: '[[ #IF bool2 ]]',
         raw: '[[ #IF bool2 ]]',
         name: CONTROLIF_IF_TOKEN,
@@ -131,49 +133,49 @@ export const TEST_TOKENS_NESTED_IF: Array<iToken> = [
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTROL_IF_TOKEN,
         value: '[[ #ELSE ]]',
         raw: '[[ #ELSE ]]',
         name: CONTROLIF_ELSE_TOKEN,
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTENT_TOKEN,
         value: 'Bool2False',
         raw: 'Bool2False',
-        name: CONTROLIF_IF_TOKEN,
+        name: INTERMEDIATE_CONTENT,
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTROL_IF_TOKEN,
         value: '[[ #IF bool3 ]]',
         raw: '[[ #IF bool3 ]]',
         name: CONTROLIF_IF_TOKEN,
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTENT_TOKEN,
         value: 'Bool3True',
         raw: 'Bool3True',
-        name: CONTROLIF_IF_TOKEN,
+        name: INTERMEDIATE_CONTENT,
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTROL_IF_TOKEN,
         value: '[[ #ENDIF ]]',
         raw: '[[ #ENDIF ]]',
         name: CONTROLIF_ENDIF_TOKEN,
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTROL_IF_TOKEN,
         value: '[[ #ENDIF ]]',
         raw: '[[ #ENDIF ]]',
         name: CONTROLIF_ENDIF_TOKEN,
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TYPE_CONTROL_IF_TOKEN,
         value: '[[ #ENDIF ]]',
         raw: '[[ #ENDIF ]]',
         name: CONTROLIF_ENDIF_TOKEN,
@@ -184,6 +186,7 @@ export const TEST_TOKENS_NESTED_IF: Array<iToken> = [
 export const TEST_COMPONENT_NESTED_IF: iComponentReference = {
     name: "TEST_COMPONENT_NESTED_IF",
     raw: "",
+    path: 'SOME_PATH',
     props: [ 'bool1', 'bool2', 'bool3'],
     tokens: TEST_TOKENS_NESTED_IF,
 }
@@ -200,17 +203,17 @@ export const TEST_PACKAGE_NESTED_IF: iTestPackage = {
             enumerationMap: {}
         },
         {
-            type: _TYPE_HTML_TOKEN,
+            type: _TYPE_CONTENT_TOKEN,
             value: 'Bool2False',
             raw: 'Bool2False',
-            name: CONTROLIF_IF_TOKEN,
+            name: INTERMEDIATE_CONTENT,
             enumerationMap: {}
         },
         {
-            type: _TYPE_HTML_TOKEN,
+            type: _TYPE_CONTENT_TOKEN,
             value: 'Bool3True',
             raw: 'Bool3True',
-            name: CONTROLIF_IF_TOKEN,
+            name: INTERMEDIATE_CONTENT,
             enumerationMap: {}
         }
     ]

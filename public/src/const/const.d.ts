@@ -32,5 +32,6 @@ export declare const CONTROL_FOR_ALIAS_INDEX: number;
 export declare const CONTROL_FOR_PREPOSITION_INDEX: number;
 export declare const CONTROL_FOR_SYMBOL_INDEX: number;
 export declare const FN_CLONE_TOKEN: (t: iToken) => iToken;
+export declare const FN_MAKE_PATH_ABSOLUTE: (absoluteBasePath: string, path: string, relativeTo?: string) => string;
 export declare const FN_GET_PROPS_ARRAY: (propsToken: iToken) => string[];
 export declare const _DEV_SYMBOLTABLE: iSymbolTable;
