@@ -1,6 +1,6 @@
 import Lexer from './lexer';
 import TokenParser from './tokenParser';
-import { _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN, _TYPE_EOF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_WHITESPACE_TOKEN, CONTROL_COMPONENT_TOKEN } from './const/tokenTypes';
+import { _TOKEN_TYPES_MAP } from './const/tokenData';
 import { FN_MAKE_PATH_ABSOLUTE, FN_GET_PROPS_ARRAY, FN_CLONE_TOKEN, BLANK_TOKEN, INVALID_INPUT_TOKEN, RENDERED_FILE_PATH, FILE_EXTENSION_HTML } from './const/const';
 import { SymbolTable } from './symbolTable';
 import * as _fs from 'fs';
@@ -31,7 +31,8 @@ export class Galgar {
         // Get the corresponding props 
         const entryComponentProps = entryComponent.props;
         const output = this.beginParseLoop(entryComponentTokens, symbolContextStack, entryComponentProps);
-        // this.saveFileOutput(entryComponentIdentifier, output);
+        console.log(entryComponentIdentifier);
+        this.saveFileOutput(entryComponentIdentifier, output);
         // let output = '';
         return output;
     }
@@ -53,19 +54,19 @@ export class Galgar {
     async saveFileOutput(identifier, contents) {
         const path = RENDERED_FILE_PATH + identifier + FILE_EXTENSION_HTML;
         console.log('[ GALGAR ] saveFileOutput(): WRITING PARSED OUTPUT TO FILE: ' + path);
-        _fs.writeFile(path, contents, () => { });
+        _fs.writeFileSync(path, contents);
     }
     async lexTokens(input) {
         const tokens = [];
         try {
             const lexer = new Lexer(input, this._grammar);
             let tempTok = BLANK_TOKEN;
-            while (tempTok.type != _TYPE_EOF_TOKEN && tempTok.type != _TYPE_INVALID_INPUT) {
+            while (tempTok.type != _TOKEN_TYPES_MAP.EOF && tempTok.type != _TOKEN_TYPES_MAP.INVALID) {
                 tempTok = lexer.lex();
                 if (tempTok === INVALID_INPUT_TOKEN)
                     break;
-                else if (tempTok.type != _TYPE_WHITESPACE_TOKEN) {
-                    if (tempTok.type == _TYPE_CONTROL_COMPONENT_TOKEN) {
+                else if (tempTok.type != _TOKEN_TYPES_MAP.WHITESPACE) {
+                    if (tempTok.type == _TOKEN_TYPES_MAP.COMPONENT) {
                         const componentPath = tempTok.value.split(' ')[2]; // [[ #import identifier as x ]]
                         this._referenceQueue.push(componentPath);
                     }
@@ -104,11 +105,11 @@ export class Galgar {
             // init lex
             let token = lexer.lex();
             // begin lex loop
-            while (token.type != _TYPE_EOF_TOKEN) {
+            while (token.type != _TOKEN_TYPES_MAP.EOF) {
                 compRef.tokens.push(token);
-                if (token.type == _TYPE_CONTROL_PROPS_TOKEN)
+                if (token.type == _TOKEN_TYPES_MAP.PROPS)
                     compRef.props = lexer.generatePropsMap(token);
-                if (token.name == CONTROL_COMPONENT_TOKEN) {
+                if (token.name == _TOKEN_TYPES_MAP.COMPONENT) {
                     const path = this.getPathFromTokenReference(token.value);
                     this._referenceQueue.push(path);
                 }
@@ -175,7 +176,7 @@ export class Galgar {
         ;
     }
     getProps(tokens) {
-        const propsTokenIndex = tokens.map((t) => t.type).indexOf(_TYPE_CONTROL_PROPS_TOKEN);
+        const propsTokenIndex = tokens.map((t) => t.type).indexOf(_TOKEN_TYPES_MAP.PROPS);
         if (propsTokenIndex < 0)
             throw new Error('[ GALGAR ERROR ] getProps(): No props token exists in this component reference');
         const propsToken = tokens[propsTokenIndex];

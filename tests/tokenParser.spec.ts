@@ -1,7 +1,7 @@
 import { iComponentMap, iComponentReference, iSymbolContext, iToken } from '../src/interfaces/interfaces';
 import { SymbolTable } from '../src/symbolTable';
 import  TokenParser from '../src/tokenParser';
-import { _TYPE_HTML_TOKEN } from '../src/const/tokenTypes';
+import { _TOKEN_TYPES_MAP } from '../src/const/tokenData';
 import { TESTING_HTML_TABLE_AS_TOKENS } from './helpers/lexer_inputs';
 import { TEST_PACKAGE_NESTED_IF, TEST_PACKAGE_DYNAMIC_HEADER, TESTING_COMPONENT_REF_MAP, iTestPackage } from './helpers/testValues';
 
@@ -34,7 +34,7 @@ describe('tokenParser.ts', () => {
 
     it('should not attempt to parse when the provided input tokens are invalid', () => {
         const invalidTokens: Array<iToken> = [ {
-            type: _TYPE_HTML_TOKEN,
+            type: _TOKEN_TYPES_MAP.HTML,
             value: '<table>',
             raw: '<table>',
             name: 'table',

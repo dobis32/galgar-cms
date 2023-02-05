@@ -1,0 +1,18 @@
+{
+    "htmlAttributes": {
+        "table": "",
+        "td": "",
+        "a": "",
+        "img": ""
+    },
+    "style": {
+        "bodyStandardFontSize": "18px",
+        "bodyStandardFontSizeMobile": "f15",
+        "bodyHeaderFontSize": "22px",
+        "bodyHeaderFontSizeMobile": "18px",
+
+        "bodyPrimaryFontColor": "",
+        "bodySecondaryFontColor": ""
+
+    }
+}

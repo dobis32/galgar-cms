@@ -1,66 +1,65 @@
 import { iToken } from '../../src/interfaces/interfaces';
-import { _TYPE_HTML_TOKEN, _TYPE_CONTENT_TOKEN, _TYPE_WHITESPACE_TOKEN } from '../../src/const/tokenTypes';
-import { INTERMEDIATE_CONTENT } from '../../src/const/const';
+import { _TOKEN_NAMES_MAP, _TOKEN_TYPES_MAP } from '../../src/const/tokenData';
 export const TESTING_HTML_TABLE_AS_STRING: string = `<table><tr><td><h2>hello world!</h2></td></tr></table>`;
 export const TESTING_HTML_TABLE_AS_TOKENS: Array<iToken> = [
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '<table>',
         raw: '<table>',
         name: 'table',
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '<tr>',
         raw: '<tr>',
         name: 'tr',
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '<td>',
         raw: '<td>',
         name: 'td',
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '<h2>',
         raw: '<h2>',
         name: 'h2',
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTENT_TOKEN,
+        type: _TOKEN_TYPES_MAP.CONTENT,
         value: 'hello world!',
         raw: 'hello world!',
-        name: INTERMEDIATE_CONTENT,
+        name: _TOKEN_NAMES_MAP.CONTENT,
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '</h2>',
         raw: '</h2>',
         name: 'h2',
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '</td>',
         raw: '</td>',
         name: 'td',
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '</tr>',
         raw: '</tr>',
         name: 'tr',
         enumerationMap: {}
     },
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '</table>',
         raw: '</table>',
         name: 'table',
@@ -70,19 +69,19 @@ export const TESTING_HTML_TABLE_AS_TOKENS: Array<iToken> = [
 export const HEADING_WITH_CONTENT_AS_STRING: string = '<h1>Hello world!</h1>';
 export const HEADING_WITH_CONTENT_AS_TOKENS: Array<iToken>  = [
     {
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '<h1>',
         raw: '<h1>',
         name: 'h1',
         enumerationMap: {}
     },{
-        type: _TYPE_CONTENT_TOKEN,
+        type: _TOKEN_TYPES_MAP.CONTENT,
         value: 'Hello world!',
         raw: 'Hello world!',
-        name: INTERMEDIATE_CONTENT,
+        name: _TOKEN_NAMES_MAP.CONTENT,
         enumerationMap: {}
     },{
-        type: _TYPE_HTML_TOKEN,
+        type: _TOKEN_TYPES_MAP.HTML,
         value: '</h1>',
         raw: '</h1>',
         name: 'h1',

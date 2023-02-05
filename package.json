@@ -8,7 +8,7 @@
     "watch": "tsc --project tsconfig.json --watch",
     "build": "tsc --project tsconfig.json",
     "dev": "nodemon --es-module-specifier-resolution=node public/index.js",
-    "go": "node --es-module-specifier-resolution=node public/scratch.js"
+    "go": "node --es-module-specifier-resolution=node public/index.js"
   },
   "repository": {
     "type": "git",

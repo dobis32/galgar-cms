@@ -1,4 +1,4 @@
-import { iSymbolContext, iSymbolTable, iToken } from "./interfaces/interfaces";
+import { iSymbolContext, iSymbolTable } from "./interfaces/interfaces";
 
 export class SymbolTable {
     private contextStack: Array<iSymbolContext>;

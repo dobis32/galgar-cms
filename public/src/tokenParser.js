@@ -1,5 +1,5 @@
-import { CONTROL_FOR_ALIAS_INDEX, CONTROL_FOR_PREPOSITION_INDEX, CONTROL_FOR_SYMBOL_INDEX, CONTROL_RULE, INTERMEDIATE_CONTENT, FN_CLONE_TOKEN, FN_GET_PROPS_ARRAY } from './const/const';
-import { _TYPE_CONTROL_FOR_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROL_TOKEN_SUFFIX, CONTROLIF_ELSE_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_HTML_TOKEN, _TYPE_CONTROL_IF_TOKEN, _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN } from "./const/tokenTypes";
+import { CONTROL_FOR_ALIAS_INDEX, CONTROL_FOR_PREPOSITION_INDEX, CONTROL_FOR_SYMBOL_INDEX, CONTROL_RULE, FN_CLONE_TOKEN, FN_GET_PROPS_ARRAY } from './const/const';
+import { _TOKEN_NAMES_MAP, _TOKEN_TYPES_MAP, _CONTROL_TOKEN_SUFFIX } from "./const/tokenData";
 import { AlgebraSolver } from "./booleanSolver";
 import { ValueInjector } from "./injector";
 import { TokenIdentifier } from "./tokenIdentifier";
@@ -72,7 +72,6 @@ export default class TokenParser {
             const prop = props[i];
             const value = this.symbolTable.resolveSymbol(prop);
             if (value == undefined) {
-                // props.forEach((p: string) => console.log('[ PARSER ERROR ] buildPropsMap(): missing prop: ' + p))
                 const errMsg = `[ PARSER ERROR ] buildPropsMap(): Failed to build init prop map, missing value for prop ${prop}`;
                 throw new Error(errMsg);
             }
@@ -88,21 +87,21 @@ export default class TokenParser {
             while (input.length > 0) {
                 const tok = input.shift();
                 switch (tok.type) {
-                    case _TYPE_CONTROL_PROPS_TOKEN:
+                    case _TOKEN_TYPES_MAP.PROPS:
                         this.processPropsToken(tok);
                         break;
-                    case _TYPE_CONTROL_IF_TOKEN:
+                    case _TOKEN_TYPES_MAP.IF:
                         input = this.parseIfControl(tok, input);
                         break;
-                    case _TYPE_CONTROL_FOR_TOKEN:
+                    case _TOKEN_TYPES_MAP.FOR:
                         input = this.parseForControl(tok, input);
                         break;
-                    case _TYPE_CONTROL_COMPONENT_TOKEN:
+                    case _TOKEN_TYPES_MAP.COMPONENT:
                         this.parseComponentControl(tok); // this won't add any new components if the alias already exists
                         break;
                     default:
                         const isValidRef = this.tokenIsAValidComponentReference(tok);
-                        if (tok.type == _TYPE_CONTROL_COMPONENT_TOKEN && !isValidRef) {
+                        if (tok.type == _TOKEN_TYPES_MAP.COMPONENT && !isValidRef) {
                             const errMsg = '[ PARSER ERROR ] parseTokens(): Could not find component reference' + tok.name;
                             throw new Error(errMsg);
                         }
@@ -222,7 +221,7 @@ export default class TokenParser {
     }
     processForControl(controlToken, tokens) {
         let ret = [];
-        if (controlToken.name === CONTROLFOR_FOR_TOKEN) {
+        if (controlToken.name === _TOKEN_NAMES_MAP.FOR) {
             const { end } = this.getControlPositioning(tokens, controlToken.type);
             const loopingTokens = [];
             let i = 0;
@@ -267,8 +266,11 @@ export default class TokenParser {
         const closingStack = [];
         for (let k = 0; k < this.outputTokens.length; k++) {
             const t = this.outputTokens[k];
+            console.log(t);
             let tabs = '';
-            if (t.type == _TYPE_HTML_TOKEN && !TokenIdentifier.isSelfClosingTag(t)) { // is non-self-closing HTML tag
+            if (t.type == _TOKEN_TYPES_MAP.WHITESPACE)
+                continue;
+            if (t.type == _TOKEN_TYPES_MAP.HTML && !TokenIdentifier.isSelfClosingTag(t)) { // is non-self-closing HTML tag
                 if (TokenIdentifier.tagMustBeClosed(t)) { // is an HTML tag that must be closed
                     const isClosing = TokenIdentifier.isClosingTag(t);
                     if (!isClosing) { // is an open HTML tag
@@ -286,7 +288,7 @@ export default class TokenParser {
             for (let i = 1; i < closingStack.length; i++) {
                 tabs += '\t';
             }
-            if (t.name === INTERMEDIATE_CONTENT)
+            if (t.name === _TOKEN_NAMES_MAP.CONTENT)
                 tabs += '\t';
             if (k > 0)
                 ret += '\n';
@@ -297,16 +299,16 @@ export default class TokenParser {
     getControlPositioning(tokens, controlType) {
         let nextControlIndex = -1;
         let endControlIndex = -1;
-        if (controlType == _TYPE_CONTROL_IF_TOKEN) {
+        if (controlType == _TOKEN_TYPES_MAP.IF) {
             const closingStack = [];
             for (let i = 0; i < tokens.length; i++) {
                 const tok = tokens[i];
-                if (tok.name == CONTROLIF_IF_TOKEN)
+                if (tok.name == _TOKEN_NAMES_MAP.IF)
                     closingStack.push(tok);
-                else if (nextControlIndex < 0 && closingStack.length == 0 && (tok.name == CONTROLIF_ELSEIF_TOKEN || tok.name == CONTROLIF_ELSE_TOKEN)) {
+                else if (nextControlIndex < 0 && closingStack.length == 0 && (tok.name == _TOKEN_NAMES_MAP.ELSEIF || tok.name == _TOKEN_NAMES_MAP.ELSE)) {
                     nextControlIndex = i;
                 }
-                else if (tok.name == CONTROLIF_ENDIF_TOKEN) {
+                else if (tok.name == _TOKEN_NAMES_MAP.ENDIF) {
                     if (closingStack.length == 0) {
                         endControlIndex = i; // this is the ENDIF control corresponding to the assumed IF control
                     }
@@ -317,13 +319,13 @@ export default class TokenParser {
                     break; // when we found the end of the assumed IF control
             }
         }
-        else if (controlType == _TYPE_CONTROL_FOR_TOKEN) {
+        else if (controlType == _TOKEN_TYPES_MAP.FOR) {
             const closingStack = [];
             for (let i = 0; i < tokens.length; i++) {
                 const tok = tokens[i];
-                if (tok.name == CONTROLFOR_FOR_TOKEN)
+                if (tok.name == _TOKEN_NAMES_MAP.FOR)
                     closingStack.push(tok);
-                else if (tok.name == CONTROLFOR_ENDFOR_TOKEN) {
+                else if (tok.name == _TOKEN_NAMES_MAP.ENDFOR) {
                     if (closingStack.length == 0) {
                         endControlIndex = i;
                         break;
@@ -340,8 +342,7 @@ export default class TokenParser {
         return { start: -1, next: nextControlIndex, end: endControlIndex };
     }
     tokenIsControlToken(tok) {
-        const suffixIndex = tok.type.indexOf(CONTROL_TOKEN_SUFFIX);
-        console.log(suffixIndex);
+        const suffixIndex = tok.type.indexOf(_CONTROL_TOKEN_SUFFIX);
         return suffixIndex == 0 ? true : false;
     }
     controlForEvaluate(forToken) {
@@ -361,7 +362,7 @@ export default class TokenParser {
     }
     controlIfEvaluate(ifToken) {
         let ret = false;
-        if (ifToken.name == CONTROLIF_ENDIF_TOKEN || ifToken.name == CONTROLIF_ELSE_TOKEN)
+        if (ifToken.name == _TOKEN_NAMES_MAP.ENDIF || ifToken.name == _TOKEN_NAMES_MAP.ELSE)
             ret = true;
         else {
             const sub = ifToken.value.substring(CONTROL_RULE.start.length, ifToken.value.length - CONTROL_RULE.end.length);
@@ -382,7 +383,7 @@ export default class TokenParser {
         let ret = false;
         const closingStack = [];
         for (let t of tokens) {
-            if (t.type == _TYPE_HTML_TOKEN && !TokenIdentifier.isSelfClosingTag(t)) {
+            if (t.type == _TOKEN_TYPES_MAP.HTML && !TokenIdentifier.isSelfClosingTag(t)) {
                 const isClosing = TokenIdentifier.isClosingTag(t);
                 if (TokenIdentifier.tagMustBeClosed(t)) {
                     if (!isClosing) {
@@ -398,10 +399,10 @@ export default class TokenParser {
                 }
             }
             else if (this.tokenIsControlToken(t)) {
-                if (t.name == CONTROLIF_IF_TOKEN || t.name == CONTROLFOR_FOR_TOKEN) {
+                if (t.name == _TOKEN_NAMES_MAP.IF || t.name == _TOKEN_NAMES_MAP.FOR) {
                     closingStack.push(t);
                 }
-                else if (t.name == CONTROLIF_ENDIF_TOKEN || t.name == CONTROLFOR_ENDFOR_TOKEN) {
+                else if (t.name == _TOKEN_NAMES_MAP.ENDIF || t.name == _TOKEN_NAMES_MAP.ENDFOR) {
                     if (closingStack.length == 0) {
                         const errMsg = `[ PARSER ERROR ] tokensProperlyEnclosed(): Encountered unexpected non-starting control token ${t.name}`;
                         throw new Error(errMsg);
@@ -414,8 +415,6 @@ export default class TokenParser {
                 }
             }
         }
-        console.log('CLOSING STACK....\n\n');
-        console.log(closingStack);
         if (closingStack.length == 0)
             ret = true;
         return ret;

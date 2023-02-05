@@ -1,6 +1,6 @@
 import * as os from 'os';
-import { EOF_TOKEN, BLANK_RULE, BLANK_TOKEN, CONTROL_PROPS_RULE, CONTROL_RULE, HTML_RULE, INVALID_TOKEN_NAME, INTERMEDIATE_CONTENT, INVALID_INPUT_TOKEN } from './const/const';
-import { _TYPE_CONTROL_PROPS_TOKEN, _TYPE_CONTROL_GENERIC_TOKEN, _TYPE_CONTROL_FOR_TOKEN, _TYPE_CONTROL_COMPONENT_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_EOF_TOKEN, _TYPE_BAD_TOKEN, _TYPE_HTML_TOKEN, _TYPE_BLANK_TOKEN, _TYPE_CONTENT_TOKEN, _TYPE_WHITESPACE_TOKEN, CONTROLFOR_FOR_TOKEN, _TYPE_CONTROL_IF_TOKEN, CONTROL_IMPORT_TOKEN, _TYPE_CONTROL_IMPORT_TOKEN, CONTROL_COMPONENT_TOKEN, CONTROL_PROPS_TOKEN } from './const/tokenTypes';
+import { EOF_TOKEN, BLANK_RULE, BLANK_TOKEN, CONTROL_PROPS_RULE, CONTROL_RULE, HTML_RULE, INVALID_INPUT_TOKEN } from './const/const';
+import { _TOKEN_NAMES_MAP, _TOKEN_TYPES_MAP } from './const/tokenData';
 import { iRule, iToken, iLexPosition } from './interfaces/interfaces';
 import Grammar from './grammar';
 
@@ -35,13 +35,13 @@ export default class Lexer {
         if (start ==  this.input.length - 1 || offsetInput.trim().length == 0) return ret = EOF_TOKEN; // reached EOF or nothing to lex
         const { position, matchedRule } = this.getNextLexPosition(offsetInput, rules);
         ret = this.generateToken(position, offsetInput, matchedRule);
-        if (position.start == -1 || ret.type == _TYPE_INVALID_INPUT) throw new Error('[ GALGAR ERROR ] lex(): failed to lex; invalid input');
+        if (position.start == -1 || ret.type ==  _TOKEN_TYPES_MAP.INVALID) throw new Error('[ GALGAR ERROR ] lex(): failed to lex; invalid input');
         else this.position += ret.raw.length;
         return ret;
     }
 
     generatePropsMap(token: iToken): Array<string>{
-        if (token.type != _TYPE_CONTROL_PROPS_TOKEN) throw new Error('[ GALGAR ERROR ] generatePropsMap(): input token was not a #PROPS token'); 
+        if (token.type != _TOKEN_TYPES_MAP.PROPS) throw new Error('[ GALGAR ERROR ] generatePropsMap(): input token was not a #PROPS token'); 
         const propsArray: Array<string> = [];
         // get token value
         const tokValue = token.value;
@@ -103,12 +103,12 @@ export default class Lexer {
         const trimmed = token.split('\t').filter((t) => t.length > 0).join('').trim();
         if (trimmed.length == 0) { // is it just white space?
             ret.value = trimmed; // be sure to preserve length of whitespace
-            ret.type = _TYPE_WHITESPACE_TOKEN; 
-            ret.name = INTERMEDIATE_CONTENT;
+            ret.type = _TOKEN_TYPES_MAP.WHITESPACE; 
+            ret.name = _TOKEN_NAMES_MAP.WHITESPACE;
         } else {
             ret.value = trimmed;
-            ret.type = _TYPE_CONTENT_TOKEN;
-            ret.name = INTERMEDIATE_CONTENT;
+            ret.type = _TOKEN_TYPES_MAP.CONTENT;
+            ret.name = _TOKEN_NAMES_MAP.CONTENT;
         };
         ret.raw = token;
         return ret;
@@ -124,31 +124,31 @@ export default class Lexer {
         let ret: string = '';
         switch (name.toLowerCase()) {
             case '#if':
-                ret = CONTROLIF_IF_TOKEN;
+                ret = _TOKEN_NAMES_MAP.IF;
                 break;
             case '#elseif':
-                ret = CONTROLIF_ELSEIF_TOKEN;
+                ret = _TOKEN_NAMES_MAP.ELSEIF;
                 break;
             case '#else':
-                ret = CONTROLIF_ELSE_TOKEN;
+                ret = _TOKEN_NAMES_MAP.ELSE;
                 break;
             case '#endif':
-                ret = CONTROLIF_ENDIF_TOKEN;
+                ret = _TOKEN_NAMES_MAP.ENDIF;
                 break;
             case '#for':
-                ret = CONTROLFOR_FOR_TOKEN;
+                ret = _TOKEN_NAMES_MAP.FOR;
                 break;
             case '#endfor':
-                ret = CONTROLFOR_ENDFOR_TOKEN;
+                ret = _TOKEN_NAMES_MAP.ENDFOR;
                 break;
             case '#import':
-                ret = CONTROL_IMPORT_TOKEN;
+                ret = _TOKEN_NAMES_MAP.IMPORT;
                 break;
             case '#component':
-                ret = CONTROL_COMPONENT_TOKEN;
+                ret = _TOKEN_NAMES_MAP.COMPONENT;
                 break;
             case '#props':
-                ret = CONTROL_PROPS_TOKEN;
+                ret = _TOKEN_NAMES_MAP.PROPS;
                 break;
         }
 
@@ -184,39 +184,39 @@ export default class Lexer {
     identifyControlType(tokenName: string): string {
         let ret: string = '';
         switch (tokenName) {
-            case CONTROLIF_IF_TOKEN:
-                ret = _TYPE_CONTROL_IF_TOKEN;
+            case _TOKEN_NAMES_MAP.IF:
+                ret = _TOKEN_TYPES_MAP.IF;
                 break;
-            case CONTROLIF_ELSEIF_TOKEN:
-                ret = _TYPE_CONTROL_IF_TOKEN;
+            case _TOKEN_NAMES_MAP.ELSEIF:
+                ret = _TOKEN_TYPES_MAP.IF;;
                 break;
-            case CONTROLIF_ELSE_TOKEN:
-                ret = _TYPE_CONTROL_IF_TOKEN;
+            case _TOKEN_NAMES_MAP.ELSE:
+                ret = _TOKEN_TYPES_MAP.IF;;
                 break;
-            case CONTROLIF_ENDIF_TOKEN:
-                ret = _TYPE_CONTROL_IF_TOKEN;
+            case _TOKEN_NAMES_MAP.ENDIF:
+                ret = _TOKEN_TYPES_MAP.IF;;
                 break;
-            case CONTROLFOR_FOR_TOKEN:
-                ret = _TYPE_CONTROL_FOR_TOKEN;
+            case _TOKEN_NAMES_MAP.FOR:
+                ret = _TOKEN_TYPES_MAP.FOR;
                 break;
-            case CONTROLFOR_ENDFOR_TOKEN:
-                ret = _TYPE_CONTROL_FOR_TOKEN;
+            case _TOKEN_NAMES_MAP.ENDFOR:
+                ret = _TOKEN_TYPES_MAP.FOR;
                 break;
-            case CONTROL_IMPORT_TOKEN:
-                ret = _TYPE_CONTROL_IMPORT_TOKEN;
+            case _TOKEN_NAMES_MAP.IMPORT:
+                ret = _TOKEN_TYPES_MAP.IMPORT;
                 break;
-            case CONTROL_COMPONENT_TOKEN:
-                ret = _TYPE_CONTROL_COMPONENT_TOKEN;
+            case _TOKEN_NAMES_MAP.COMPONENT:
+                ret = _TOKEN_TYPES_MAP.COMPONENT;
                 break;
-            case CONTROL_PROPS_TOKEN:
-                ret = _TYPE_CONTROL_PROPS_TOKEN;
+            case _TOKEN_NAMES_MAP.PROPS:
+                ret = _TOKEN_TYPES_MAP.PROPS;
                 break;
         }
         return `${ret}`;
     }
 
     getTokenName(raw: string, rule: iRule): string {
-        return rule.type == _TYPE_CONTROL_GENERIC_TOKEN ? this.getControlTokenName(raw) : this.getHTMLTokenName(raw)
+        return rule.type == _TOKEN_TYPES_MAP.GENERIC ? this.getControlTokenName(raw) : this.getHTMLTokenName(raw)
     }
 
     getHTMLTokenName(raw: string): string {
@@ -224,7 +224,7 @@ export default class Lexer {
         const endLength = HTML_RULE.end.length;
         const stripped: string = raw.substring(startLength, raw.length - endLength).trim().replace('/', '');
         const splitString: Array<string> = stripped.split(' ');
-        const name = splitString? splitString[0] : Object.assign({}, INVALID_TOKEN_NAME);
+        const name = splitString? splitString[0] : Object.assign({}, _TOKEN_NAMES_MAP.INVALID);
         return name;
     }
 }

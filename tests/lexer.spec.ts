@@ -1,9 +1,9 @@
 import Lexer from '../src/lexer';
 import Grammar from '../src/grammar';
-import { HTML_RULE, CONTROL_RULE, CONTROL_IF_RULE, INTERMEDIATE_CONTENT, INVALID_INPUT_TOKEN, INVALID_POSITION } from '../src/const/const';
+import { HTML_RULE, CONTROL_RULE, INVALID_INPUT_TOKEN, INVALID_POSITION } from '../src/const/const';
 import { iToken, iLexPosition, iRule } from '../src/interfaces/interfaces';
 import { TESTING_HTML_TABLE_AS_STRING, TESTING_HTML_TABLE_AS_TOKENS, HEADING_WITH_CONTENT_AS_STRING, HEADING_WITH_CONTENT_AS_TOKENS } from './helpers/lexer_inputs';
-import { _TYPE_CONTROL_IF_TOKEN, _TYPE_CONTROL_FOR_TOKEN, _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN, _TYPE_CONTENT_TOKEN, _TYPE_CONTROL_IMPORT_TOKEN, _TYPE_WHITESPACE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROL_IMPORT_TOKEN, CONTROL_COMPONENT_TOKEN, CONTROL_PROPS_TOKEN, CONTROLIF_ELSE_TOKEN, _TYPE_HTML_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROLFOR_ENDFOR_TOKEN } from '../src/const/tokenTypes';
+import { _TOKEN_NAMES_MAP, _TOKEN_TYPES_MAP } from '../src/const/tokenData';
 describe ('lexer.ts', () => {
     let lexer: Lexer;
     const grammar: Grammar = new Grammar([ HTML_RULE, CONTROL_RULE ]);
@@ -104,8 +104,8 @@ describe ('lexer.ts', () => {
         expect(typeof lexer.tokenizeIntermediateContent).toEqual('function');
         expect(resultTok.raw).toEqual(intermediateValue);
         expect(resultTok.value).toEqual(intermediateValue.trim());
-        expect(resultTok.type).toEqual(_TYPE_CONTENT_TOKEN);
-        expect(resultTok.name).toEqual(INTERMEDIATE_CONTENT);
+        expect(resultTok.type).toEqual(_TOKEN_TYPES_MAP.CONTENT);
+        expect(resultTok.name).toEqual(_TOKEN_NAMES_MAP.CONTENT);
        
     });
 
@@ -116,13 +116,13 @@ describe ('lexer.ts', () => {
         expect(typeof lexer.tokenizeIntermediateContent).toEqual('function');
         expect(resultTok.raw).toEqual(whiteSpaceInput);
         expect(resultTok.value).toEqual(whiteSpaceInput.trim());
-        expect(resultTok.type).toEqual(_TYPE_WHITESPACE_TOKEN);
-        expect(resultTok.name).toEqual(INTERMEDIATE_CONTENT);
+        expect(resultTok.type).toEqual(_TOKEN_TYPES_MAP.WHITESPACE);
+        expect(resultTok.name).toEqual(_TOKEN_NAMES_MAP.WHITESPACE);
     });
 
     it('should have a function to get the name of a given token input as a string', () => {
         const controlTokValue: string = '[[ #IF value ]]';
-        const controlTokName: string = CONTROLIF_IF_TOKEN;
+        const controlTokName: string = _TOKEN_NAMES_MAP.IF;
         lexer.getMappedControlTokenName = jest.fn(lexer.getMappedControlTokenName);
         const result: string = lexer.getControlTokenName(controlTokValue);
         expect(lexer.getControlTokenName).toBeDefined();
@@ -142,11 +142,11 @@ describe ('lexer.ts', () => {
         const importResult: string = lexer.getMappedControlTokenName(importString);
         const componentResult: string = lexer.getMappedControlTokenName(componentString);
         const propsResult: string = lexer.getMappedControlTokenName(propsString);
-        expect(ifResult).toEqual(CONTROLIF_IF_TOKEN);
-        expect(forResult).toEqual(CONTROLFOR_FOR_TOKEN);
-        expect(importResult).toEqual(CONTROL_IMPORT_TOKEN);
-        expect(componentResult).toEqual(CONTROL_COMPONENT_TOKEN);
-        expect(propsResult).toEqual(CONTROL_PROPS_TOKEN);
+        expect(ifResult).toEqual(_TOKEN_NAMES_MAP.IF);
+        expect(forResult).toEqual(_TOKEN_NAMES_MAP.FOR);
+        expect(importResult).toEqual(_TOKEN_NAMES_MAP.IMPORT);
+        expect(componentResult).toEqual(_TOKEN_NAMES_MAP.COMPONENT);
+        expect(propsResult).toEqual(_TOKEN_NAMES_MAP.PROPS);
 
     });
 
@@ -165,9 +165,9 @@ describe ('lexer.ts', () => {
         expect(lexer.validateToken).toBeDefined();
         expect(typeof lexer.validateToken).toEqual('function');
         expect(result1.value).toEqual(inputToValidate1);
-        expect(result1.type).toEqual(_TYPE_HTML_TOKEN);
+        expect(result1.type).toEqual(_TOKEN_TYPES_MAP.HTML);
         expect(result2.value).toEqual(inputToValidate2);
-        expect(result2.type).toEqual(_TYPE_CONTROL_FOR_TOKEN);
+        expect(result2.type).toEqual(_TOKEN_TYPES_MAP.FOR);
         expect(result3).toEqual(INVALID_INPUT_TOKEN);
         expect(lexer.getTokenName).toHaveBeenCalledTimes(2);
         expect(lexer.identifyControlType).toHaveBeenCalledTimes(1);
@@ -176,15 +176,15 @@ describe ('lexer.ts', () => {
     it('should have a function to identify a provided control type', () => {
         expect(lexer.identifyControlType).toBeDefined();
         expect(typeof lexer.identifyControlType).toEqual('function');
-        expect(lexer.identifyControlType(CONTROLIF_IF_TOKEN)).toEqual(_TYPE_CONTROL_IF_TOKEN);
-        expect(lexer.identifyControlType(CONTROLIF_ELSE_TOKEN)).toEqual(_TYPE_CONTROL_IF_TOKEN);
-        expect(lexer.identifyControlType(CONTROLIF_ELSEIF_TOKEN)).toEqual(_TYPE_CONTROL_IF_TOKEN);
-        expect(lexer.identifyControlType(CONTROLIF_ENDIF_TOKEN)).toEqual(_TYPE_CONTROL_IF_TOKEN);
-        expect(lexer.identifyControlType(CONTROLFOR_FOR_TOKEN)).toEqual(_TYPE_CONTROL_FOR_TOKEN);
-        expect(lexer.identifyControlType(CONTROLFOR_ENDFOR_TOKEN)).toEqual(_TYPE_CONTROL_FOR_TOKEN);
-        expect(lexer.identifyControlType(CONTROL_IMPORT_TOKEN)).toEqual(_TYPE_CONTROL_IMPORT_TOKEN);
-        expect(lexer.identifyControlType(CONTROL_COMPONENT_TOKEN)).toEqual(_TYPE_CONTROL_COMPONENT_TOKEN);
-        expect(lexer.identifyControlType(CONTROL_PROPS_TOKEN)).toEqual(_TYPE_CONTROL_PROPS_TOKEN);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.IF)).toEqual(_TOKEN_TYPES_MAP.IF);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.ELSE)).toEqual(_TOKEN_TYPES_MAP.IF);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.ELSEIF)).toEqual(_TOKEN_TYPES_MAP.IF);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.ENDIF)).toEqual(_TOKEN_TYPES_MAP.IF);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.FOR)).toEqual(_TOKEN_TYPES_MAP.FOR);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.ENDFOR)).toEqual(_TOKEN_TYPES_MAP.FOR);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.IMPORT)).toEqual(_TOKEN_TYPES_MAP.IMPORT);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.COMPONENT)).toEqual(_TOKEN_TYPES_MAP.COMPONENT);
+        expect(lexer.identifyControlType(_TOKEN_NAMES_MAP.PROPS)).toEqual(_TOKEN_TYPES_MAP.PROPS);
 
     });
 
@@ -203,7 +203,7 @@ describe ('lexer.ts', () => {
         expect(lexer.getControlTokenName).toHaveBeenCalledTimes(1);
         expect(lexer.getHTMLTokenName).toHaveBeenCalledTimes(1);
         expect(result1).toEqual(targetName1);
-        expect(result2).toEqual(CONTROLIF_ENDIF_TOKEN);
+        expect(result2).toEqual(_TOKEN_NAMES_MAP.ENDIF);
         
     });
 

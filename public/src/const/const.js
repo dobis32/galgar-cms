@@ -1,39 +1,42 @@
 import * as _path from 'path';
-import { _TYPE_CONTROL_GENERIC_TOKEN, CONTROLFOR_FOR_TOKEN, CONTROL_PROPS_TOKEN, CONTROLFOR_ENDFOR_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_ELSEIF_TOKEN, CONTROLIF_IF_TOKEN, _TYPE_INVALID_INPUT, _TYPE_BAD_TOKEN, _TYPE_EOF_TOKEN, _TYPE_HTML_TOKEN, _TYPE_INJECTION_TOKEN, CONTROL_COMPONENT_TOKEN } from '../const/tokenTypes';
-import { _TYPE_BLANK_TOKEN } from './tokenTypes';
+import { _TYPE_HTML_TOKEN, _TYPE_INJECTION_TOKEN, _TYPE_BLANK_TOKEN, _TYPE_CONTROL_GENERIC_TOKEN, _TOKEN_TYPES_MAP } from './tokenData';
 const localdir = process.cwd();
-export const _COMPONENTS_DIRECTORY = 'D:\\galgar-cms\\user_components';
-export const COMPONENT_FILE_PATH = localdir + '\\user_components\\';
-export const RENDERED_FILE_PATH = localdir + '\\public\\rendered\\';
-export const SELF_CLOSING_TAG_TYPES = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
-export const CLOSING_EXEMPT_TAGS = ['meta'];
-export const BLANK_RULE = { type: _TYPE_BLANK_TOKEN, start: '_$BLANK_RULE$_', end: '_$BLANK_RULE$_' };
-export const HTML_RULE = { type: _TYPE_HTML_TOKEN, start: '<', end: '>' };
-export const INJECT_RULE = { type: _TYPE_INJECTION_TOKEN, start: '{{', end: '}}' };
-export const CONTROL_RULE = { type: _TYPE_CONTROL_GENERIC_TOKEN, start: '[[', end: ']]' };
-export const CONTROL_IF_RULE = { type: CONTROLIF_IF_TOKEN, start: '#', end: 'IF' };
-export const CONTROL_ELSEIF_RULE = { type: CONTROLIF_ELSEIF_TOKEN, start: '#', end: 'ELSEIF' };
-export const CONTROL_ELSE_RULE = { type: CONTROLIF_ELSE_TOKEN, start: '#', end: 'ELSE' };
-export const CONTROL_FOR_RULE = { type: CONTROLFOR_FOR_TOKEN, start: '#', end: 'FOR' };
-export const CONTROL_END_RULE = { type: CONTROLFOR_ENDFOR_TOKEN, start: '#', end: 'END' };
-export const CONTROL_COMPONENT_RULE = { type: CONTROL_COMPONENT_TOKEN, start: '#', end: 'COMPONENT' };
-export const CONTROL_PROPS_RULE = { type: CONTROL_PROPS_TOKEN, start: '#', end: 'PROPS' };
-export const BLANK_TOKEN = { type: _TYPE_BLANK_TOKEN, raw: '_$BLANK_TOKEN$$_', value: '_$BLANK_TOKEN$$_', name: '_$BLANK_TOKEN$_', enumerationMap: {} };
-export const BAD_TOKEN = { type: _TYPE_BAD_TOKEN, raw: '_$BLANK_TOKEN$$_', value: '_$BAD_TOKEN$_', name: '_$BAD_TOKEN$_', enumerationMap: {} };
-export const EOF_TOKEN = { type: _TYPE_EOF_TOKEN, raw: '_$BLANK_TOKEN$$_', value: '_$EOF_TOKEN$_', name: '_$EOF_TOKEN$_', enumerationMap: {} };
-export const INVALID_POSITION = { start: -1, end: -1, next: -1 };
-export const INVALID_INPUT_TOKEN = { type: _TYPE_INVALID_INPUT, raw: '_$BLANK_TOKEN$$_', value: '_$INVALID_TOKEN$_', name: '_$INVALID_TOKEN$_', enumerationMap: {} };
-export const INTERMEDIATE_CONTENT = '_$INTERMEDIATE_CONTENT$_';
-export const WHITESPACE_CONTENT = '_$WHITESPACE_CONTENT$_';
-export const INVALID_TOKEN_NAME = '_$INVALID_TOKEN_NAME$_';
+// strings
+export const _COMPONENTS_DIRECTORY = ['D:', 'galgar-cms', 'user_components'].join(_path.sep);
+export const COMPONENT_FILE_PATH = [localdir, 'user_components', ''].join(_path.sep);
+export const RENDERED_FILE_PATH = [localdir, 'public', 'rendered', ''].join(_path.sep);
 export const FILE_EXTENSION_GGD = '.ggd';
 export const FILE_EXTENSION_HTML = '.html';
 export const ALGEBRAIC_AND = '&';
 export const ALGEBRAIC_OR = '|';
 export const ALGEBRAIC_NOT = 'NOT';
+// arrays
+export const SELF_CLOSING_TAG_TYPES = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+export const CLOSING_EXEMPT_TAGS = ['meta'];
+// rules
+export const BLANK_RULE = { type: _TYPE_BLANK_TOKEN, start: '_$BLANK_RULE$_', end: '_$BLANK_RULE$_' };
+export const HTML_RULE = { type: _TYPE_HTML_TOKEN, start: '<', end: '>' };
+export const INJECT_RULE = { type: _TYPE_INJECTION_TOKEN, start: '{{', end: '}}' };
+export const CONTROL_RULE = { type: _TYPE_CONTROL_GENERIC_TOKEN, start: '[[', end: ']]' };
+export const CONTROL_IF_RULE = { type: _TOKEN_TYPES_MAP.IF, start: '#', end: 'IF' };
+export const CONTROL_ELSEIF_RULE = { type: _TOKEN_TYPES_MAP.IF, start: '#', end: 'ELSEIF' };
+export const CONTROL_ELSE_RULE = { type: _TOKEN_TYPES_MAP.IF, start: '#', end: 'ELSE' };
+export const CONTROL_FOR_RULE = { type: _TOKEN_TYPES_MAP.FOR, start: '#', end: 'FOR' };
+export const CONTROL_END_RULE = { type: _TOKEN_TYPES_MAP.FOR, start: '#', end: 'END' };
+export const CONTROL_COMPONENT_RULE = { type: _TOKEN_TYPES_MAP.COMPONENT, start: '#', end: 'COMPONENT' };
+export const CONTROL_PROPS_RULE = { type: _TOKEN_TYPES_MAP.PROPS, start: '#', end: 'PROPS' };
+// tokens
+export const BLANK_TOKEN = { type: _TOKEN_TYPES_MAP.BLANK, raw: '_$BLANK_TOKEN$$_', value: '_$BLANK_TOKEN$$_', name: '_$BLANK_TOKEN$_', enumerationMap: {} };
+export const BAD_TOKEN = { type: _TOKEN_TYPES_MAP.BAD, raw: '_$BLANK_TOKEN$$_', value: '_$BAD_TOKEN$_', name: '_$BAD_TOKEN$_', enumerationMap: {} };
+export const EOF_TOKEN = { type: _TOKEN_TYPES_MAP.EOF, raw: '_$BLANK_TOKEN$$_', value: '_$EOF_TOKEN$_', name: '_$EOF_TOKEN$_', enumerationMap: {} };
+export const INVALID_INPUT_TOKEN = { type: _TOKEN_TYPES_MAP.INVALID, raw: '_$BLANK_TOKEN$$_', value: '_$INVALID_TOKEN$_', name: '_$INVALID_TOKEN$_', enumerationMap: {} };
+// lex positions
+export const INVALID_POSITION = { start: -1, end: -1, next: -1 };
+// numbers
 export const CONTROL_FOR_ALIAS_INDEX = 1;
 export const CONTROL_FOR_PREPOSITION_INDEX = 2;
 export const CONTROL_FOR_SYMBOL_INDEX = 3;
+// functions
 export const FN_CLONE_TOKEN = (t) => {
     const clone = Object.assign({}, t);
     clone.enumerationMap = Object.assign({}, t.enumerationMap);

@@ -1,7 +1,7 @@
 import { ValueInjector } from '../src/injector';
 import { iSymbolTable, iToken, iLexPosition, iSymbolContext } from '../src/interfaces/interfaces';
 import { INJECT_RULE, INVALID_POSITION } from '../src/const/const';
-import { _TYPE_HTML_TOKEN } from '../src/const/tokenTypes';
+import { _TOKEN_TYPES_MAP } from '../src/const/tokenData';
 
 import { SymbolTable } from '../src/symbolTable';
 describe('injector.ts', () => {
@@ -30,7 +30,7 @@ describe('injector.ts', () => {
         symbolTable = new SymbolTable(ctxStack);
 
         testToken = {
-            type: _TYPE_HTML_TOKEN,
+            type: _TOKEN_TYPES_MAP.HTML,
             value: '<h3 style={{ data.HeaderStyle }}>{{ data.Content }}</h3>',
             raw: WHITE_SPACING + '<h3 style={{ data.HeaderStyle }}>{{ data.Content }}</h3>' + WHITE_SPACING,
             name: 'h3',
@@ -38,7 +38,7 @@ describe('injector.ts', () => {
         };
 
         testCompRefToken = {
-            type: _TYPE_HTML_TOKEN,
+            type: _TOKEN_TYPES_MAP.HTML,
             value: '<myComponent style={{ data.ComponentStyle }} data={{ data.ComponentData }}/>',
             raw: '<myComponent style={{ data.ComponentStyle }} data={{ data.ComponentData }}/>',
             name: 'h3',
@@ -48,14 +48,14 @@ describe('injector.ts', () => {
         testCompRefProps = ['style', 'data'];
 
         badTestToken1 = {
-            type: _TYPE_HTML_TOKEN,
+            type: _TOKEN_TYPES_MAP.HTML,
             value: '<h3> data.Content }}</h3>',
             raw: WHITE_SPACING + '<h3> data.Content }}</h3>' + WHITE_SPACING,
             name: 'h3',
             enumerationMap: {}
         };
         badTestToken2 = {
-            type: _TYPE_HTML_TOKEN,
+            type: _TOKEN_TYPES_MAP.HTML,
             value: '<h3>{{ data.Content</h3>',
             raw: WHITE_SPACING + '<h3>{{ data.Content</h3>' + WHITE_SPACING,
             name: 'h3',

@@ -1,5 +1,4 @@
 import { iToken, iLexPosition, iSymbolTable } from "./interfaces/interfaces";
-import { _TYPE_CONTROL_FOR_TOKEN, _TYPE_HTML_TOKEN, _TYPE_CONTROL_IF_TOKEN, _TYPE_CONTROL_COMPONENT_TOKEN, _TYPE_CONTROL_PROPS_TOKEN } from "./const/tokenTypes";
 import { INJECT_RULE, INVALID_POSITION } from './const/const';
 import { SymbolTable } from './symbolTable';
 

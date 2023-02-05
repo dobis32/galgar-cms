@@ -1,6 +1,5 @@
 import { iSymbolContext, iToken, iComponentReference, iComponentMap } from '../../src/interfaces/interfaces';
-import { _TYPE_CONTROL_IF_TOKEN,  _TYPE_CONTROL_PROPS_TOKEN, CONTROLIF_ELSE_TOKEN, CONTROLIF_IF_TOKEN, CONTROLIF_ENDIF_TOKEN, CONTROL_PROPS_TOKEN, _TYPE_HTML_TOKEN, _TYPE_CONTENT_TOKEN } from '../../src/const/tokenTypes';
-import { INTERMEDIATE_CONTENT } from '../../src/const/const';
+import { _TOKEN_NAMES_MAP, _TOKEN_TYPES_MAP } from '../../src/const/tokenData';
 
 export interface iTestPackage {
     component: iComponentReference;
@@ -13,21 +12,21 @@ export const TEST_COMPONENT_DYNAMIC_HEADER: iComponentReference = {
     raw: '<h1>{{ msg }}</h1>',
     tokens: [
         {
-            type: _TYPE_HTML_TOKEN,
+            type: _TOKEN_TYPES_MAP.HTML,
             value: '<h1>',
             raw: '<h1>',
             name: 'h1',
             enumerationMap: {}
         },
         {
-            type: _TYPE_CONTENT_TOKEN,
+            type: _TOKEN_TYPES_MAP.CONTENT,
             value: '{{ msg }}',
             raw: '{{ msg }}',
-            name: INTERMEDIATE_CONTENT,
+            name: _TOKEN_NAMES_MAP.CONTENT,
             enumerationMap: {}
         },
         {
-            type: _TYPE_HTML_TOKEN,
+            type: _TOKEN_TYPES_MAP.HTML,
             value: '</h1>',
             raw: '</h1>',
             name: 'h1',
@@ -48,7 +47,7 @@ export const TEST_COMPONENT_DYNAMIC_INPUT: iComponentReference = {
     raw: '<input value="{{ val }}">',
     tokens: [
         {
-            type: _TYPE_HTML_TOKEN,
+            type: _TOKEN_TYPES_MAP.HTML,
             value: '<input value="{{ val }}">',
             raw: '<input value="{{ val }}">',
             name: 'input',
@@ -65,7 +64,7 @@ export const TESTING_COMPONENT_REF_MAP: iComponentMap = {
 }
 
 export const TEST_TOKEN_H1: iToken = {
-    type: _TYPE_HTML_TOKEN,
+    type: _TOKEN_TYPES_MAP.HTML,
     value: '<h1>',
     raw: '<h1>',
     name: 'h1',
@@ -73,7 +72,7 @@ export const TEST_TOKEN_H1: iToken = {
 };
 
 export const TEST_TOKEN_H1_CLOSING: iToken = {
-    type: _TYPE_HTML_TOKEN,
+    type: _TOKEN_TYPES_MAP.HTML,
     value: '</h1>',
     raw: '</h1>',
     name: 'h1',
@@ -81,7 +80,7 @@ export const TEST_TOKEN_H1_CLOSING: iToken = {
 };
 
 export const TEST_TOKEN_INPUT: iToken = {
-    type: _TYPE_HTML_TOKEN,
+    type: _TOKEN_TYPES_MAP.HTML,
     value: '<input />',
     raw: '<input />',
     name: 'input',
@@ -89,7 +88,7 @@ export const TEST_TOKEN_INPUT: iToken = {
 };
 
 export const TEST_TOKEN_META: iToken = {
-    type: _TYPE_HTML_TOKEN,
+    type: _TOKEN_TYPES_MAP.HTML,
     value: '<meta >',
     raw: '<meta >',
     name: 'meta',
@@ -98,87 +97,87 @@ export const TEST_TOKEN_META: iToken = {
 
 export const TEST_TOKENS_NESTED_IF: Array<iToken> = [
     {
-        type: _TYPE_CONTROL_PROPS_TOKEN,
+        type: _TOKEN_TYPES_MAP.PROPS,
         value: '[[ #PROPS bool1, bool2, bool3 ]]',
         raw: '[[ #PROPS bool1, bool2, bool3 ]]',
-        name: CONTROL_PROPS_TOKEN,
+        name: _TOKEN_NAMES_MAP.PROPS,
         enumerationMap: {}
     }, 
     {
-        type: _TYPE_CONTROL_IF_TOKEN,
+        type: _TOKEN_TYPES_MAP.IF,
         value: '[[ #IF bool1 ]]',
         raw: '[[ #IF bool1 ]]',
-        name: CONTROLIF_IF_TOKEN,
+        name: _TOKEN_NAMES_MAP.IF,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTENT_TOKEN,
+        type: _TOKEN_TYPES_MAP.CONTENT,
         value: 'Bool1True',
         raw: 'Bool1True',
-        name: INTERMEDIATE_CONTENT,
+        name: _TOKEN_NAMES_MAP.CONTENT,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTROL_IF_TOKEN,
+        type: _TOKEN_TYPES_MAP.IF,
         value: '[[ #IF bool2 ]]',
         raw: '[[ #IF bool2 ]]',
-        name: CONTROLIF_IF_TOKEN,
+        name: _TOKEN_NAMES_MAP.IF,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTENT_TOKEN,
+        type: _TOKEN_TYPES_MAP.CONTENT,
         value: 'Bool2True',
         raw: 'Bool2True',
-        name: INTERMEDIATE_CONTENT,
+        name: _TOKEN_NAMES_MAP.CONTENT,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTROL_IF_TOKEN,
+        type: _TOKEN_TYPES_MAP.IF,
         value: '[[ #ELSE ]]',
         raw: '[[ #ELSE ]]',
-        name: CONTROLIF_ELSE_TOKEN,
+        name: _TOKEN_NAMES_MAP.ELSE,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTENT_TOKEN,
+        type: _TOKEN_TYPES_MAP.CONTENT,
         value: 'Bool2False',
         raw: 'Bool2False',
-        name: INTERMEDIATE_CONTENT,
+        name: _TOKEN_NAMES_MAP.CONTENT,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTROL_IF_TOKEN,
+        type: _TOKEN_TYPES_MAP.IF,
         value: '[[ #IF bool3 ]]',
         raw: '[[ #IF bool3 ]]',
-        name: CONTROLIF_IF_TOKEN,
+        name: _TOKEN_NAMES_MAP.IF,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTENT_TOKEN,
+        type: _TOKEN_TYPES_MAP.CONTENT,
         value: 'Bool3True',
         raw: 'Bool3True',
-        name: INTERMEDIATE_CONTENT,
+        name: _TOKEN_NAMES_MAP.CONTENT,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTROL_IF_TOKEN,
+        type: _TOKEN_TYPES_MAP.IF,
         value: '[[ #ENDIF ]]',
         raw: '[[ #ENDIF ]]',
-        name: CONTROLIF_ENDIF_TOKEN,
+        name: _TOKEN_NAMES_MAP.ENDIF,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTROL_IF_TOKEN,
+        type: _TOKEN_TYPES_MAP.IF,
         value: '[[ #ENDIF ]]',
         raw: '[[ #ENDIF ]]',
-        name: CONTROLIF_ENDIF_TOKEN,
+        name: _TOKEN_NAMES_MAP.ENDIF,
         enumerationMap: {}
     },
     {
-        type: _TYPE_CONTROL_IF_TOKEN,
+        type: _TOKEN_TYPES_MAP.IF,
         value: '[[ #ENDIF ]]',
         raw: '[[ #ENDIF ]]',
-        name: CONTROLIF_ENDIF_TOKEN,
+        name: _TOKEN_NAMES_MAP.ENDIF,
         enumerationMap: {}
     }
 ]
@@ -196,24 +195,24 @@ export const TEST_PACKAGE_NESTED_IF: iTestPackage = {
     symbolTableStack: [ { aliases: {}, props: { bool1: true, bool2: false, bool3: true } } ],
     expectedResult: [
         {
-            type: _TYPE_CONTENT_TOKEN,
+            type: _TOKEN_TYPES_MAP.CONTENT,
             value: 'Bool1True',
             raw: 'Bool1True',
-            name: INTERMEDIATE_CONTENT,
+            name: _TOKEN_NAMES_MAP.CONTENT,
             enumerationMap: {}
         },
         {
-            type: _TYPE_CONTENT_TOKEN,
+            type: _TOKEN_TYPES_MAP.CONTENT,
             value: 'Bool2False',
             raw: 'Bool2False',
-            name: INTERMEDIATE_CONTENT,
+            name: _TOKEN_NAMES_MAP.CONTENT,
             enumerationMap: {}
         },
         {
-            type: _TYPE_CONTENT_TOKEN,
+            type: _TOKEN_TYPES_MAP.CONTENT,
             value: 'Bool3True',
             raw: 'Bool3True',
-            name: INTERMEDIATE_CONTENT,
+            name: _TOKEN_NAMES_MAP.CONTENT,
             enumerationMap: {}
         }
     ]
