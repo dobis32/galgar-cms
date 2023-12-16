@@ -1,5 +1,5 @@
 [[ #PROPS userInfo, postInfo ]]
-[[ #COMPONENT .\components\componentA AS compA ]]
-[[ #COMPONENT .\components\componentB AS compB ]]
-<compA username={{ userInfo.username }} id={{ userInfo.id }} quote={{ userInfo.quote }} />
-<compB postName={{ postInfo.postName }} postAuthor={{ userInfo.id }} postBody={{ postInfo.postBody }} />
+[[ #COMPONENT .\components\componentA.ggd AS userComp ]]
+[[ #COMPONENT .\components\componentB.ggd AS postComp ]]
+<userComp username={{ userInfo.username }} id={{ userInfo.id }} quote={{ userInfo.quote }} />
+<postComp postName={{ postInfo.postName }} postAuthor={{ userInfo.id }} postBody={{ postInfo.postBody }} />

@@ -4,7 +4,8 @@
         "myClass1": "my-class-1", 
         "myClass2": "my-class-2", 
         "myContent1": "this is just some content",
-        "myContent2": "this is some other content"
+        "myContent2": "this is some other content. and now I added more content",
+        "author": "scott j vanderweide"
     },
     "identifier": "tests\\valueInjection\\valueInjection"
 }

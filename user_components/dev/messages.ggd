@@ -1,6 +1,0 @@
-[[ #COMPONENT inboxMessage AS msg ]]
-[[ #PROPS name, messages ]]
-<h2>{{ name }}</h2>
-[[ #FOR m IN messages ]]
-    <msg data={{ m }} />
-[[ #ENDFOR ]]

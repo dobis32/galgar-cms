@@ -1,5 +1,0 @@
-[[ #COMPONENT test2 AS fizzbuzz ]]
-[[ #COMPONENT dumb_button AS dumbButton ]]
-[[ #PROPS foo,bar ]]
-<fizzbuzz data1={{ foo }} data2={{ bar }} />
-<dumbButton label={{  }} />

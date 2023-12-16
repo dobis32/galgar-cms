@@ -1,9 +1,0 @@
-[[ #PROPS foo, bar, name ]]
-<h1>Hello {{ name }}</h1>
-[[ #IF foo & bar ]]
-    <h2>foo AND bar</h2>
-[[ #ELSEIF foo ]]
-    <h2>just foo</h2>
-[[ #ELSE ]]
-    <h2>no foo, no bar</h2>
-[[ #ENDIF ]]

@@ -1,5 +1,5 @@
 [[ #PROPS posts ]]
-[[ #COMPONENT .\components\post AS userPost ]]
+[[ #COMPONENT .\components\post.ggd AS userPost ]]
 <h1>Posts:</h1>
 [[ #FOR post IN posts ]]
 <userPost name={{ post.name }} author={{ post.author }} body={{ post.body }} />

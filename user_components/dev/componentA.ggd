@@ -1,5 +1,0 @@
-[[ #COMPONENT ./ComponentB.ggd as CompA]]
-[[ #PROPS data ]]
-[[ #FOR x IN data ]]
-    <CompA label={{ x }} />
-[[ #ENDFOR ]]

@@ -1,0 +1,6 @@
+<style>
+    .my-class-2 {
+        color: #00f;
+        font-weight: bold;
+    }
+</style>

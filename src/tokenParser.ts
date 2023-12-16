@@ -31,10 +31,6 @@ export default class TokenParser {
         return this.input;
     }
 
-    // getComponentMap(): iComponentMap {
-    //     return this.componentMap;
-    // }
-
     parse(): Array<iToken> {
         const props: Array<string> = this.initProps;
         const isValid: boolean = this.validate();

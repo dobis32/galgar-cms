@@ -1,3 +1,5 @@
 [[ #PROPS myStyle1, myClass1, myClass2, myContent1, myContent2 ]]
+[[ #COMPONENT .\style.ggd AS myStyle ]]
 <h1 class="{{ myClass1 }}" style="{{ myStyle1 }}">{{ myContent1 }}</h1>
 <h2 class="{{ myClass2 }}">{{ myContent2 }}</h2>
+<myStyle />

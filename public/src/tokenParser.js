@@ -25,9 +25,6 @@ export default class TokenParser {
     getTokens() {
         return this.input;
     }
-    // getComponentMap(): iComponentMap {
-    //     return this.componentMap;
-    // }
     parse() {
         const props = this.initProps;
         const isValid = this.validate();

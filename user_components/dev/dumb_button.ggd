@@ -1,2 +1,0 @@
-[[ #PROPS label ]]
-<button>{{ label }}</button>

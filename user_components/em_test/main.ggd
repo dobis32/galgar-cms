@@ -1,4 +1,0 @@
-[[ #PROPS ]]
-[[ #COMPONENT .\components\hero AS heroComponent ]]
-[[ #COMPONENT .\components\secondary AS secondaryComoponent ]]
-[[ #COMPONENT .\components\footer AS footerComponent ]]

@@ -10,10 +10,8 @@ export declare class Galgar {
     }): Promise<string>;
     private loadFileInput;
     private saveFileOutput;
-    private lexTokens;
     private generateComponentMap;
     private getPathFromTokenReference;
     makePathAbsolute(path: string, relativeTo?: string): string;
     private beginParseLoop;
-    private getProps;
 }

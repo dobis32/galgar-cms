@@ -36,21 +36,6 @@ export const ValueInjector = {
         }
     },
     getPropMapForComponentRef(componentToken: iToken, expectedProps: Array<string>, st: SymbolTable): iSymbolTable {
-        // VALID:
-        //   <CompA/>
-        //   <CompA />
-        //   <CompA message={{ value }} sender={{ other_value }} />
-        // INVALID: 
-        //   <CompA =/>
-        //   <CompAmessage={{ value }} />
-        //   <CompA message={{ value }}sender={{ other_value }}/>
-        /*
-            Strategy:
-            1. Find any assignment (in other words, confirm there are props being bound)
-            2. Identify assignments, verify the prop being assigned is an expected property of the target component
-            3. Resolve the symbol being assigned
-            4. Map to prop map
-        */
         const propMap: iSymbolTable = { };
         try {
             if (expectedProps.length == 0) return propMap;
@@ -82,8 +67,6 @@ export const ValueInjector = {
         }
     },
     getSymbolNameFromInjection(injectionString: string, controlPosition: iLexPosition): string {
-        // Q: why is the symbol name being grabbed from the raw value?
-        // A: the lex positions are relative to raw value because the 'value' member itself has a length that will likely change when values are injected
         if (controlPosition == INVALID_POSITION) throw new Error('[ INJECTOR ERROR ] getSymbolNameFromInjection(): bad injection position given for:\n' + injectionString);
         const adjustedStart: number = controlPosition.start + INJECT_RULE.start.length;
         const symbol: string = injectionString.substring(adjustedStart, controlPosition.end).trim();

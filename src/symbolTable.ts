@@ -65,11 +65,6 @@ export class SymbolTable {
             }
             else ret = rootSymbol;
             if (ret == undefined) {
-                /* const currentContext: iSymbolContext = this.getContext();
-                console.log('[ SYMBOL TABLE ] Undefined symbol found:', symbolName, iteration);
-                Object.keys(currentContext.aliases).forEach((key: string) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.aliases[key]));
-                Object.keys(currentContext.props).forEach((key: string) => console.log('[ SYMBOL TABLE ] ' + key + ': ' + currentContext.props[key]));
-                */
                 throw new Error('[ SYMBOL TABLE ERROR ] resolveSymbol(): failed to resolve symbol: ' + symbolName + ' length: ' + symbolName.length );
             }
         } catch(error) {
